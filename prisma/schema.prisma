@@ -1,0 +1,48 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Tienda {
+  id                Int        @id @default(autoincrement())
+  codigo            String     @unique @db.VarChar(20)
+  nombre            String     @db.VarChar(150)
+  descripcion       String?    @db.VarChar(500)
+  galeria           String     @db.VarChar(150)
+  piso              String?    @db.VarChar(20)
+  numeroLocal       String     @map("numero_local") @db.VarChar(30)
+  telefono          String?    @db.VarChar(20)
+  estado            Boolean    @default(true)
+  fechaCreacion     DateTime   @default(now()) @map("fecha_creacion")
+  fechaModificacion DateTime   @updatedAt @map("fecha_modificacion")
+  productos         Producto[]
+
+  @@map("tienda")
+}
+
+model Producto {
+  id                Int      @id @default(autoincrement())
+  tiendaId          Int      @map("tienda_id")
+  codigo            String   @unique @db.VarChar(20)
+  nombre            String   @db.VarChar(150)
+  categoria         String   @db.VarChar(80)
+  descripcion       String?  @db.VarChar(500)
+  color             String?  @db.VarChar(50)
+  talla             String?  @db.VarChar(20)
+  precio            Decimal  @db.Decimal(10, 2)
+  stock             Int      @default(0)
+  imagenUrl         String?  @map("imagen_url") @db.VarChar(500)
+  estado            Boolean  @default(true)
+  fechaCreacion     DateTime @default(now()) @map("fecha_creacion")
+  fechaModificacion DateTime @updatedAt @map("fecha_modificacion")
+
+  tienda Tienda @relation(fields: [tiendaId], references: [id])
+
+  @@index([tiendaId])
+  @@map("producto")
+}
