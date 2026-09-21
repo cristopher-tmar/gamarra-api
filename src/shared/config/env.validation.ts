@@ -20,4 +20,23 @@ export const envValidationSchema = Joi.object({
       'any.required':
         'La variable DATABASE_URL es obligatoria',
     }),
+
+  JWT_SECRET: Joi.string()
+    .min(32)
+    .required()
+    .messages({
+      'string.empty':
+        'La variable JWT_SECRET es obligatoria',
+      'string.min':
+        'La variable JWT_SECRET debe tener al menos 32 caracteres',
+      'any.required':
+        'La variable JWT_SECRET es obligatoria',
+  }),
+
+  JWT_EXPIRES_IN: Joi.string()
+    .default('15m')
+    .messages({
+      'string.empty':
+        'La variable JWT_EXPIRES_IN no puede estar vacía',
+  }),
 });
