@@ -51,8 +51,10 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
+  Usuario: 'Usuario',
   Tienda: 'Tienda',
-  Producto: 'Producto'
+  Producto: 'Producto',
+  ProductoImagen: 'ProductoImagen'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -71,6 +73,21 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
+export const UsuarioScalarFieldEnum = {
+  id: 'id',
+  nombres: 'nombres',
+  apellidos: 'apellidos',
+  correo: 'correo',
+  passwordHash: 'passwordHash',
+  rol: 'rol',
+  estado: 'estado',
+  fechaCreacion: 'fechaCreacion',
+  fechaModificacion: 'fechaModificacion'
+} as const
+
+export type UsuarioScalarFieldEnum = (typeof UsuarioScalarFieldEnum)[keyof typeof UsuarioScalarFieldEnum]
+
+
 export const TiendaScalarFieldEnum = {
   id: 'id',
   codigo: 'codigo',
@@ -82,7 +99,8 @@ export const TiendaScalarFieldEnum = {
   telefono: 'telefono',
   estado: 'estado',
   fechaCreacion: 'fechaCreacion',
-  fechaModificacion: 'fechaModificacion'
+  fechaModificacion: 'fechaModificacion',
+  usuarioId: 'usuarioId'
 } as const
 
 export type TiendaScalarFieldEnum = (typeof TiendaScalarFieldEnum)[keyof typeof TiendaScalarFieldEnum]
@@ -95,11 +113,9 @@ export const ProductoScalarFieldEnum = {
   nombre: 'nombre',
   categoria: 'categoria',
   descripcion: 'descripcion',
-  color: 'color',
-  talla: 'talla',
   precio: 'precio',
   stock: 'stock',
-  imagenUrl: 'imagenUrl',
+  atributos: 'atributos',
   estado: 'estado',
   fechaCreacion: 'fechaCreacion',
   fechaModificacion: 'fechaModificacion'
@@ -108,12 +124,44 @@ export const ProductoScalarFieldEnum = {
 export type ProductoScalarFieldEnum = (typeof ProductoScalarFieldEnum)[keyof typeof ProductoScalarFieldEnum]
 
 
+export const ProductoImagenScalarFieldEnum = {
+  id: 'id',
+  productoId: 'productoId',
+  url: 'url',
+  nombreOriginal: 'nombreOriginal',
+  mimeType: 'mimeType',
+  tamanioBytes: 'tamanioBytes',
+  ancho: 'ancho',
+  alto: 'alto',
+  hashArchivo: 'hashArchivo',
+  principal: 'principal',
+  orden: 'orden',
+  estado: 'estado',
+  estadoProcesamiento: 'estadoProcesamiento',
+  modeloEmbedding: 'modeloEmbedding',
+  fechaProcesamiento: 'fechaProcesamiento',
+  mensajeError: 'mensajeError',
+  fechaCreacion: 'fechaCreacion',
+  fechaModificacion: 'fechaModificacion'
+} as const
+
+export type ProductoImagenScalarFieldEnum = (typeof ProductoImagenScalarFieldEnum)[keyof typeof ProductoImagenScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {
@@ -130,4 +178,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 

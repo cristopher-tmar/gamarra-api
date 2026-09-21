@@ -9,7 +9,20 @@
 * 🟢 You can import this file directly.
 */
 
+export const EstadoProcesamientoImagen = {
+  PENDIENTE: 'PENDIENTE',
+  PROCESANDO: 'PROCESANDO',
+  PROCESADA: 'PROCESADA',
+  ERROR: 'ERROR'
+} as const
+
+export type EstadoProcesamientoImagen = (typeof EstadoProcesamientoImagen)[keyof typeof EstadoProcesamientoImagen]
 
 
-// This file is empty because there are no enums in the schema.
-export {}
+export const RolUsuario = {
+  ADMINISTRADOR: 'ADMINISTRADOR',
+  COMERCIANTE: 'COMERCIANTE',
+  CLIENTE: 'CLIENTE'
+} as const
+
+export type RolUsuario = (typeof RolUsuario)[keyof typeof RolUsuario]

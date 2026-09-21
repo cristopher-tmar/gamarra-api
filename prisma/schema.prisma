@@ -8,6 +8,22 @@ datasource db {
   provider = "postgresql"
 }
 
+model Usuario {
+  id                 Int        @id @default(autoincrement())
+  nombres            String     @db.VarChar(100)
+  apellidos          String     @db.VarChar(100)
+  correo             String     @unique @db.VarChar(150)
+  passwordHash       String     @map("password_hash") @db.VarChar(255)
+  rol                RolUsuario @default(CLIENTE)
+  estado             Boolean    @default(true)
+  fechaCreacion      DateTime   @default(now()) @map("fecha_creacion")
+  fechaModificacion  DateTime   @updatedAt @map("fecha_modificacion")
+  
+  tiendas Tienda[]
+
+  @@map("usuario")
+}
+
 model Tienda {
   id                Int        @id @default(autoincrement())
   codigo            String     @unique @db.VarChar(20)
@@ -22,6 +38,10 @@ model Tienda {
   fechaModificacion DateTime   @updatedAt @map("fecha_modificacion")
   productos         Producto[]
 
+  usuarioId Int     @map("usuario_id")
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+
+  @@index([usuarioId])
   @@map("tienda")
 }
 
@@ -32,17 +52,58 @@ model Producto {
   nombre            String   @db.VarChar(150)
   categoria         String   @db.VarChar(80)
   descripcion       String?  @db.VarChar(500)
-  color             String?  @db.VarChar(50)
-  talla             String?  @db.VarChar(20)
   precio            Decimal  @db.Decimal(10, 2)
   stock             Int      @default(0)
-  imagenUrl         String?  @map("imagen_url") @db.VarChar(500)
+  atributos         Json?
   estado            Boolean  @default(true)
   fechaCreacion     DateTime @default(now()) @map("fecha_creacion")
   fechaModificacion DateTime @updatedAt @map("fecha_modificacion")
 
-  tienda Tienda @relation(fields: [tiendaId], references: [id])
+  tienda   Tienda           @relation(fields: [tiendaId], references: [id])
+  imagenes ProductoImagen[]
 
   @@index([tiendaId])
+  @@index([categoria])
   @@map("producto")
+}
+
+model ProductoImagen {
+  id                  Int                       @id @default(autoincrement())
+  productoId          Int                       @map("producto_id")
+  url                 String                    @db.VarChar(500)
+  nombreOriginal      String?                   @map("nombre_original") @db.VarChar(255)
+  mimeType            String?                   @map("mime_type") @db.VarChar(100)
+  tamanioBytes        Int?                      @map("tamanio_bytes")
+  ancho               Int?
+  alto                Int?
+  hashArchivo         String?                   @map("hash_archivo") @db.VarChar(64)
+  principal           Boolean                   @default(false)
+  orden               Int                       @default(1)
+  estado              Boolean                   @default(true)
+  estadoProcesamiento EstadoProcesamientoImagen @default(PENDIENTE) @map("estado_procesamiento")
+  modeloEmbedding     String?                   @map("modelo_embedding") @db.VarChar(100)
+  fechaProcesamiento  DateTime?                 @map("fecha_procesamiento")
+  mensajeError        String?                   @map("mensaje_error") @db.VarChar(500)
+  fechaCreacion       DateTime                  @default(now()) @map("fecha_creacion")
+  fechaModificacion   DateTime                  @updatedAt @map("fecha_modificacion")
+
+  producto Producto @relation(fields: [productoId], references: [id], onDelete: Cascade)
+
+  @@unique([productoId, url])
+  @@index([productoId])
+  @@index([estadoProcesamiento])
+  @@map("producto_imagen")
+}
+
+enum EstadoProcesamientoImagen {
+  PENDIENTE
+  PROCESANDO
+  PROCESADA
+  ERROR
+}
+
+enum RolUsuario {
+  ADMINISTRADOR
+  COMERCIANTE
+  CLIENTE
 }

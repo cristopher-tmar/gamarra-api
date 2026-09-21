@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../src/generated/prisma/client';
+import * as argon2 from 'argon2';
 
 const connectionString = process.env.DATABASE_URL;
 
@@ -15,6 +16,33 @@ const adapter = new PrismaPg({
 const prisma = new PrismaClient({
   adapter,
 });
+
+const usuarios = [
+  {
+    nombres: 'Administrador',
+    apellidos: 'Gamarra',
+    correo: 'admin@gamarra.com',
+    password: 'Admin123*',
+    rol: 'ADMINISTRADOR' as const,
+    estado: true,
+  },
+  {
+    nombres: 'Comerciante',
+    apellidos: 'Demo',
+    correo: 'comerciante@gamarra.com',
+    password: 'Comerciante123*',
+    rol: 'COMERCIANTE' as const,
+    estado: true,
+  },
+  {
+    nombres: 'Cliente',
+    apellidos: 'Demo',
+    correo: 'cliente@gamarra.com',
+    password: 'Cliente123*',
+    rol: 'CLIENTE' as const,
+    estado: true,
+  },
+];
 
 const tiendas = [
   {
@@ -46,12 +74,35 @@ const productos = [
     nombre: 'Polo oversize negro',
     categoria: 'Polos',
     descripcion: 'Polo de algodón con corte oversize y estilo urbano',
-    color: 'Negro',
-    talla: 'M',
     precio: 45.9,
     stock: 20,
-    imagenUrl: null,
+    atributos: {
+      colores: ['Negro'],
+      tallas: ['S', 'M', 'L'],
+      material: 'Algodón',
+      tipoCuello: 'Redondo',
+      tipoManga: 'Corta',
+      estilo: 'Oversize',
+    },
     estado: true,
+    imagenes: [
+      {
+        url: 'https://placehold.co/800x1000?text=POL-001-Frontal',
+        nombreOriginal: 'pol-001-frontal.jpg',
+        mimeType: 'image/jpeg',
+        principal: true,
+        orden: 1,
+        estado: true,
+      },
+      {
+        url: 'https://placehold.co/800x1000?text=POL-001-Posterior',
+        nombreOriginal: 'pol-001-posterior.jpg',
+        mimeType: 'image/jpeg',
+        principal: false,
+        orden: 2,
+        estado: true,
+      },
+    ],
   },
   {
     tiendaCodigo: 'TIE-001',
@@ -59,12 +110,27 @@ const productos = [
     nombre: 'Polo básico blanco',
     categoria: 'Polos',
     descripcion: 'Polo básico de algodón para uso casual',
-    color: 'Blanco',
-    talla: 'L',
     precio: 35,
     stock: 30,
-    imagenUrl: null,
+    atributos: {
+      colores: ['Blanco'],
+      tallas: ['M', 'L', 'XL'],
+      material: 'Algodón',
+      tipoCuello: 'Redondo',
+      tipoManga: 'Corta',
+      estilo: 'Básico',
+    },
     estado: true,
+    imagenes: [
+      {
+        url: 'https://placehold.co/800x1000?text=POL-002-Frontal',
+        nombreOriginal: 'pol-002-frontal.jpg',
+        mimeType: 'image/jpeg',
+        principal: true,
+        orden: 1,
+        estado: true,
+      },
+    ],
   },
   {
     tiendaCodigo: 'TIE-001',
@@ -72,12 +138,34 @@ const productos = [
     nombre: 'Casaca denim azul',
     categoria: 'Casacas',
     descripcion: 'Casaca de denim azul con bolsillos delanteros',
-    color: 'Azul',
-    talla: 'M',
     precio: 89.9,
     stock: 12,
-    imagenUrl: null,
+    atributos: {
+      colores: ['Azul'],
+      tallas: ['S', 'M', 'L'],
+      material: 'Denim',
+      tipoCierre: 'Botones',
+      estilo: 'Casual',
+    },
     estado: true,
+    imagenes: [
+      {
+        url: 'https://placehold.co/800x1000?text=CAS-001-Frontal',
+        nombreOriginal: 'cas-001-frontal.jpg',
+        mimeType: 'image/jpeg',
+        principal: true,
+        orden: 1,
+        estado: true,
+      },
+      {
+        url: 'https://placehold.co/800x1000?text=CAS-001-Posterior',
+        nombreOriginal: 'cas-001-posterior.jpg',
+        mimeType: 'image/jpeg',
+        principal: false,
+        orden: 2,
+        estado: true,
+      },
+    ],
   },
   {
     tiendaCodigo: 'TIE-002',
@@ -85,12 +173,26 @@ const productos = [
     nombre: 'Pantalón cargo beige',
     categoria: 'Pantalones',
     descripcion: 'Pantalón cargo con bolsillos laterales',
-    color: 'Beige',
-    talla: '32',
     precio: 75.5,
     stock: 18,
-    imagenUrl: null,
+    atributos: {
+      colores: ['Beige'],
+      tallas: ['30', '32', '34'],
+      material: 'Drill',
+      tipoCorte: 'Cargo',
+      cantidadBolsillos: 6,
+    },
     estado: true,
+    imagenes: [
+      {
+        url: 'https://placehold.co/800x1000?text=PAN-001-Frontal',
+        nombreOriginal: 'pan-001-frontal.jpg',
+        mimeType: 'image/jpeg',
+        principal: true,
+        orden: 1,
+        estado: true,
+      },
+    ],
   },
   {
     tiendaCodigo: 'TIE-002',
@@ -98,12 +200,26 @@ const productos = [
     nombre: 'Vestido casual floreado',
     categoria: 'Vestidos',
     descripcion: 'Vestido casual con diseño floreado',
-    color: 'Multicolor',
-    talla: 'S',
     precio: 69.9,
     stock: 10,
-    imagenUrl: null,
+    atributos: {
+      colores: ['Multicolor'],
+      tallas: ['S', 'M'],
+      material: 'Viscosa',
+      largo: 'Midi',
+      ocasion: 'Casual',
+    },
     estado: true,
+    imagenes: [
+      {
+        url: 'https://placehold.co/800x1000?text=VES-001-Frontal',
+        nombreOriginal: 'ves-001-frontal.jpg',
+        mimeType: 'image/jpeg',
+        principal: true,
+        orden: 1,
+        estado: true,
+      },
+    ],
   },
   {
     tiendaCodigo: 'TIE-002',
@@ -111,17 +227,80 @@ const productos = [
     nombre: 'Polera urbana gris',
     categoria: 'Poleras',
     descripcion: 'Polera de algodón con capucha y bolsillo delantero',
-    color: 'Gris',
-    talla: 'L',
     precio: 79.9,
     stock: 15,
-    imagenUrl: null,
+    atributos: {
+      colores: ['Gris'],
+      tallas: ['M', 'L', 'XL'],
+      material: 'Algodón',
+      tieneCapucha: true,
+      estilo: 'Urbano',
+    },
     estado: true,
+    imagenes: [
+      {
+        url: 'https://placehold.co/800x1000?text=POL-003-Frontal',
+        nombreOriginal: 'pol-003-frontal.jpg',
+        mimeType: 'image/jpeg',
+        principal: true,
+        orden: 1,
+        estado: true,
+      },
+      {
+        url: 'https://placehold.co/800x1000?text=POL-003-Posterior',
+        nombreOriginal: 'pol-003-posterior.jpg',
+        mimeType: 'image/jpeg',
+        principal: false,
+        orden: 2,
+        estado: true,
+      },
+    ],
   },
 ];
 
 async function main(): Promise<void> {
   console.log('Iniciando seed...');
+
+    for (const usuario of usuarios) {
+    const passwordHash = await argon2.hash(
+      usuario.password,
+    );
+
+    await prisma.usuario.upsert({
+      where: {
+        correo: usuario.correo,
+      },
+      update: {
+        nombres: usuario.nombres,
+        apellidos: usuario.apellidos,
+        passwordHash,
+        rol: usuario.rol,
+        estado: usuario.estado,
+      },
+      create: {
+        nombres: usuario.nombres,
+        apellidos: usuario.apellidos,
+        correo: usuario.correo,
+        passwordHash,
+        rol: usuario.rol,
+        estado: usuario.estado,
+      },
+    });
+
+    console.log(`Usuario procesado: ${usuario.correo}`);
+  }
+
+  const comerciante = await prisma.usuario.findUnique({
+    where: {
+      correo: 'comerciante@gamarra.com',
+    },
+  });
+
+  if (!comerciante) {
+    throw new Error(
+      'No se encontró el usuario comerciante para asociar las tiendas',
+    );
+  }
 
   for (const tienda of tiendas) {
     await prisma.tienda.upsert({
@@ -129,75 +308,88 @@ async function main(): Promise<void> {
         codigo: tienda.codigo,
       },
       update: {
-        nombre: tienda.nombre,
-        descripcion: tienda.descripcion,
-        galeria: tienda.galeria,
-        piso: tienda.piso,
-        numeroLocal: tienda.numeroLocal,
-        telefono: tienda.telefono,
-        estado: tienda.estado,
+        ...tienda,
+        usuarioId: comerciante.id,
       },
-      create: tienda,
+      create: {
+        ...tienda,
+        usuarioId: comerciante.id,
+      },
     });
 
     console.log(`Tienda procesada: ${tienda.codigo}`);
   }
 
   for (const producto of productos) {
+    const { tiendaCodigo, imagenes, ...datosProducto } = producto;
+
     const tienda = await prisma.tienda.findUnique({
       where: {
-        codigo: producto.tiendaCodigo,
+        codigo: tiendaCodigo,
       },
     });
 
     if (!tienda) {
-      throw new Error(
-        `No se encontró la tienda ${producto.tiendaCodigo}`,
-      );
+      throw new Error(`No se encontró la tienda ${tiendaCodigo}`);
     }
 
-    await prisma.producto.upsert({
+    const productoGuardado = await prisma.producto.upsert({
       where: {
-        codigo: producto.codigo,
+        codigo: datosProducto.codigo,
       },
       update: {
         tiendaId: tienda.id,
-        nombre: producto.nombre,
-        categoria: producto.categoria,
-        descripcion: producto.descripcion,
-        color: producto.color,
-        talla: producto.talla,
-        precio: producto.precio,
-        stock: producto.stock,
-        imagenUrl: producto.imagenUrl,
-        estado: producto.estado,
+        nombre: datosProducto.nombre,
+        categoria: datosProducto.categoria,
+        descripcion: datosProducto.descripcion,
+        precio: datosProducto.precio,
+        stock: datosProducto.stock,
+        atributos: datosProducto.atributos,
+        estado: datosProducto.estado,
       },
       create: {
         tiendaId: tienda.id,
-        codigo: producto.codigo,
-        nombre: producto.nombre,
-        categoria: producto.categoria,
-        descripcion: producto.descripcion,
-        color: producto.color,
-        talla: producto.talla,
-        precio: producto.precio,
-        stock: producto.stock,
-        imagenUrl: producto.imagenUrl,
-        estado: producto.estado,
+        ...datosProducto,
       },
     });
 
+    for (const imagen of imagenes) {
+      await prisma.productoImagen.upsert({
+        where: {
+          productoId_url: {
+            productoId: productoGuardado.id,
+            url: imagen.url,
+          },
+        },
+        update: {
+          nombreOriginal: imagen.nombreOriginal,
+          mimeType: imagen.mimeType,
+          principal: imagen.principal,
+          orden: imagen.orden,
+          estado: imagen.estado,
+        },
+        create: {
+          productoId: productoGuardado.id,
+          ...imagen,
+        },
+      });
+    }
+
     console.log(
-      `Producto procesado: ${producto.codigo} → ${tienda.codigo}`,
+      `Producto procesado: ${producto.codigo} con ${imagenes.length} imagen(es)`,
     );
   }
 
+  const totalUsuarios = await prisma.usuario.count();
   const totalTiendas = await prisma.tienda.count();
   const totalProductos = await prisma.producto.count();
+  const totalImagenes = await prisma.productoImagen.count();
 
   console.log('Seed ejecutado correctamente.');
-  console.log(`Total de tiendas: ${totalTiendas}`);
-  console.log(`Total de productos: ${totalProductos}`);
+  console.log(`Usuarios: ${totalUsuarios}`);
+  console.log(`Tiendas: ${totalTiendas}`);
+  console.log(`Productos: ${totalProductos}`);
+  console.log(`Imágenes: ${totalImagenes}`);
 }
 
 main()

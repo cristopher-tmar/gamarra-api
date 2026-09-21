@@ -28,10 +28,12 @@ export type AggregateTienda = {
 
 export type TiendaAvgAggregateOutputType = {
   id: number | null
+  usuarioId: number | null
 }
 
 export type TiendaSumAggregateOutputType = {
   id: number | null
+  usuarioId: number | null
 }
 
 export type TiendaMinAggregateOutputType = {
@@ -46,6 +48,7 @@ export type TiendaMinAggregateOutputType = {
   estado: boolean | null
   fechaCreacion: Date | null
   fechaModificacion: Date | null
+  usuarioId: number | null
 }
 
 export type TiendaMaxAggregateOutputType = {
@@ -60,6 +63,7 @@ export type TiendaMaxAggregateOutputType = {
   estado: boolean | null
   fechaCreacion: Date | null
   fechaModificacion: Date | null
+  usuarioId: number | null
 }
 
 export type TiendaCountAggregateOutputType = {
@@ -74,16 +78,19 @@ export type TiendaCountAggregateOutputType = {
   estado: number
   fechaCreacion: number
   fechaModificacion: number
+  usuarioId: number
   _all: number
 }
 
 
 export type TiendaAvgAggregateInputType = {
   id?: true
+  usuarioId?: true
 }
 
 export type TiendaSumAggregateInputType = {
   id?: true
+  usuarioId?: true
 }
 
 export type TiendaMinAggregateInputType = {
@@ -98,6 +105,7 @@ export type TiendaMinAggregateInputType = {
   estado?: true
   fechaCreacion?: true
   fechaModificacion?: true
+  usuarioId?: true
 }
 
 export type TiendaMaxAggregateInputType = {
@@ -112,6 +120,7 @@ export type TiendaMaxAggregateInputType = {
   estado?: true
   fechaCreacion?: true
   fechaModificacion?: true
+  usuarioId?: true
 }
 
 export type TiendaCountAggregateInputType = {
@@ -126,6 +135,7 @@ export type TiendaCountAggregateInputType = {
   estado?: true
   fechaCreacion?: true
   fechaModificacion?: true
+  usuarioId?: true
   _all?: true
 }
 
@@ -227,6 +237,7 @@ export type TiendaGroupByOutputType = {
   estado: boolean
   fechaCreacion: Date
   fechaModificacion: Date
+  usuarioId: number
   _count: TiendaCountAggregateOutputType | null
   _avg: TiendaAvgAggregateOutputType | null
   _sum: TiendaSumAggregateOutputType | null
@@ -264,7 +275,9 @@ export type TiendaWhereInput = {
   estado?: Prisma.BoolFilter<"Tienda"> | boolean
   fechaCreacion?: Prisma.DateTimeFilter<"Tienda"> | Date | string
   fechaModificacion?: Prisma.DateTimeFilter<"Tienda"> | Date | string
+  usuarioId?: Prisma.IntFilter<"Tienda"> | number
   productos?: Prisma.ProductoListRelationFilter
+  usuario?: Prisma.XOR<Prisma.UsuarioScalarRelationFilter, Prisma.UsuarioWhereInput>
 }
 
 export type TiendaOrderByWithRelationInput = {
@@ -279,7 +292,9 @@ export type TiendaOrderByWithRelationInput = {
   estado?: Prisma.SortOrder
   fechaCreacion?: Prisma.SortOrder
   fechaModificacion?: Prisma.SortOrder
+  usuarioId?: Prisma.SortOrder
   productos?: Prisma.ProductoOrderByRelationAggregateInput
+  usuario?: Prisma.UsuarioOrderByWithRelationInput
 }
 
 export type TiendaWhereUniqueInput = Prisma.AtLeast<{
@@ -297,7 +312,9 @@ export type TiendaWhereUniqueInput = Prisma.AtLeast<{
   estado?: Prisma.BoolFilter<"Tienda"> | boolean
   fechaCreacion?: Prisma.DateTimeFilter<"Tienda"> | Date | string
   fechaModificacion?: Prisma.DateTimeFilter<"Tienda"> | Date | string
+  usuarioId?: Prisma.IntFilter<"Tienda"> | number
   productos?: Prisma.ProductoListRelationFilter
+  usuario?: Prisma.XOR<Prisma.UsuarioScalarRelationFilter, Prisma.UsuarioWhereInput>
 }, "id" | "codigo">
 
 export type TiendaOrderByWithAggregationInput = {
@@ -312,6 +329,7 @@ export type TiendaOrderByWithAggregationInput = {
   estado?: Prisma.SortOrder
   fechaCreacion?: Prisma.SortOrder
   fechaModificacion?: Prisma.SortOrder
+  usuarioId?: Prisma.SortOrder
   _count?: Prisma.TiendaCountOrderByAggregateInput
   _avg?: Prisma.TiendaAvgOrderByAggregateInput
   _max?: Prisma.TiendaMaxOrderByAggregateInput
@@ -334,6 +352,7 @@ export type TiendaScalarWhereWithAggregatesInput = {
   estado?: Prisma.BoolWithAggregatesFilter<"Tienda"> | boolean
   fechaCreacion?: Prisma.DateTimeWithAggregatesFilter<"Tienda"> | Date | string
   fechaModificacion?: Prisma.DateTimeWithAggregatesFilter<"Tienda"> | Date | string
+  usuarioId?: Prisma.IntWithAggregatesFilter<"Tienda"> | number
 }
 
 export type TiendaCreateInput = {
@@ -348,6 +367,7 @@ export type TiendaCreateInput = {
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   productos?: Prisma.ProductoCreateNestedManyWithoutTiendaInput
+  usuario: Prisma.UsuarioCreateNestedOneWithoutTiendasInput
 }
 
 export type TiendaUncheckedCreateInput = {
@@ -362,6 +382,7 @@ export type TiendaUncheckedCreateInput = {
   estado?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
+  usuarioId: number
   productos?: Prisma.ProductoUncheckedCreateNestedManyWithoutTiendaInput
 }
 
@@ -377,6 +398,7 @@ export type TiendaUpdateInput = {
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   productos?: Prisma.ProductoUpdateManyWithoutTiendaNestedInput
+  usuario?: Prisma.UsuarioUpdateOneRequiredWithoutTiendasNestedInput
 }
 
 export type TiendaUncheckedUpdateInput = {
@@ -391,6 +413,7 @@ export type TiendaUncheckedUpdateInput = {
   estado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  usuarioId?: Prisma.IntFieldUpdateOperationsInput | number
   productos?: Prisma.ProductoUncheckedUpdateManyWithoutTiendaNestedInput
 }
 
@@ -406,6 +429,7 @@ export type TiendaCreateManyInput = {
   estado?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
+  usuarioId: number
 }
 
 export type TiendaUpdateManyMutationInput = {
@@ -433,6 +457,17 @@ export type TiendaUncheckedUpdateManyInput = {
   estado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  usuarioId?: Prisma.IntFieldUpdateOperationsInput | number
+}
+
+export type TiendaListRelationFilter = {
+  every?: Prisma.TiendaWhereInput
+  some?: Prisma.TiendaWhereInput
+  none?: Prisma.TiendaWhereInput
+}
+
+export type TiendaOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type TiendaCountOrderByAggregateInput = {
@@ -447,10 +482,12 @@ export type TiendaCountOrderByAggregateInput = {
   estado?: Prisma.SortOrder
   fechaCreacion?: Prisma.SortOrder
   fechaModificacion?: Prisma.SortOrder
+  usuarioId?: Prisma.SortOrder
 }
 
 export type TiendaAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  usuarioId?: Prisma.SortOrder
 }
 
 export type TiendaMaxOrderByAggregateInput = {
@@ -465,6 +502,7 @@ export type TiendaMaxOrderByAggregateInput = {
   estado?: Prisma.SortOrder
   fechaCreacion?: Prisma.SortOrder
   fechaModificacion?: Prisma.SortOrder
+  usuarioId?: Prisma.SortOrder
 }
 
 export type TiendaMinOrderByAggregateInput = {
@@ -479,10 +517,12 @@ export type TiendaMinOrderByAggregateInput = {
   estado?: Prisma.SortOrder
   fechaCreacion?: Prisma.SortOrder
   fechaModificacion?: Prisma.SortOrder
+  usuarioId?: Prisma.SortOrder
 }
 
 export type TiendaSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  usuarioId?: Prisma.SortOrder
 }
 
 export type TiendaScalarRelationFilter = {
@@ -490,28 +530,50 @@ export type TiendaScalarRelationFilter = {
   isNot?: Prisma.TiendaWhereInput
 }
 
-export type StringFieldUpdateOperationsInput = {
-  set?: string
+export type TiendaCreateNestedManyWithoutUsuarioInput = {
+  create?: Prisma.XOR<Prisma.TiendaCreateWithoutUsuarioInput, Prisma.TiendaUncheckedCreateWithoutUsuarioInput> | Prisma.TiendaCreateWithoutUsuarioInput[] | Prisma.TiendaUncheckedCreateWithoutUsuarioInput[]
+  connectOrCreate?: Prisma.TiendaCreateOrConnectWithoutUsuarioInput | Prisma.TiendaCreateOrConnectWithoutUsuarioInput[]
+  createMany?: Prisma.TiendaCreateManyUsuarioInputEnvelope
+  connect?: Prisma.TiendaWhereUniqueInput | Prisma.TiendaWhereUniqueInput[]
+}
+
+export type TiendaUncheckedCreateNestedManyWithoutUsuarioInput = {
+  create?: Prisma.XOR<Prisma.TiendaCreateWithoutUsuarioInput, Prisma.TiendaUncheckedCreateWithoutUsuarioInput> | Prisma.TiendaCreateWithoutUsuarioInput[] | Prisma.TiendaUncheckedCreateWithoutUsuarioInput[]
+  connectOrCreate?: Prisma.TiendaCreateOrConnectWithoutUsuarioInput | Prisma.TiendaCreateOrConnectWithoutUsuarioInput[]
+  createMany?: Prisma.TiendaCreateManyUsuarioInputEnvelope
+  connect?: Prisma.TiendaWhereUniqueInput | Prisma.TiendaWhereUniqueInput[]
+}
+
+export type TiendaUpdateManyWithoutUsuarioNestedInput = {
+  create?: Prisma.XOR<Prisma.TiendaCreateWithoutUsuarioInput, Prisma.TiendaUncheckedCreateWithoutUsuarioInput> | Prisma.TiendaCreateWithoutUsuarioInput[] | Prisma.TiendaUncheckedCreateWithoutUsuarioInput[]
+  connectOrCreate?: Prisma.TiendaCreateOrConnectWithoutUsuarioInput | Prisma.TiendaCreateOrConnectWithoutUsuarioInput[]
+  upsert?: Prisma.TiendaUpsertWithWhereUniqueWithoutUsuarioInput | Prisma.TiendaUpsertWithWhereUniqueWithoutUsuarioInput[]
+  createMany?: Prisma.TiendaCreateManyUsuarioInputEnvelope
+  set?: Prisma.TiendaWhereUniqueInput | Prisma.TiendaWhereUniqueInput[]
+  disconnect?: Prisma.TiendaWhereUniqueInput | Prisma.TiendaWhereUniqueInput[]
+  delete?: Prisma.TiendaWhereUniqueInput | Prisma.TiendaWhereUniqueInput[]
+  connect?: Prisma.TiendaWhereUniqueInput | Prisma.TiendaWhereUniqueInput[]
+  update?: Prisma.TiendaUpdateWithWhereUniqueWithoutUsuarioInput | Prisma.TiendaUpdateWithWhereUniqueWithoutUsuarioInput[]
+  updateMany?: Prisma.TiendaUpdateManyWithWhereWithoutUsuarioInput | Prisma.TiendaUpdateManyWithWhereWithoutUsuarioInput[]
+  deleteMany?: Prisma.TiendaScalarWhereInput | Prisma.TiendaScalarWhereInput[]
+}
+
+export type TiendaUncheckedUpdateManyWithoutUsuarioNestedInput = {
+  create?: Prisma.XOR<Prisma.TiendaCreateWithoutUsuarioInput, Prisma.TiendaUncheckedCreateWithoutUsuarioInput> | Prisma.TiendaCreateWithoutUsuarioInput[] | Prisma.TiendaUncheckedCreateWithoutUsuarioInput[]
+  connectOrCreate?: Prisma.TiendaCreateOrConnectWithoutUsuarioInput | Prisma.TiendaCreateOrConnectWithoutUsuarioInput[]
+  upsert?: Prisma.TiendaUpsertWithWhereUniqueWithoutUsuarioInput | Prisma.TiendaUpsertWithWhereUniqueWithoutUsuarioInput[]
+  createMany?: Prisma.TiendaCreateManyUsuarioInputEnvelope
+  set?: Prisma.TiendaWhereUniqueInput | Prisma.TiendaWhereUniqueInput[]
+  disconnect?: Prisma.TiendaWhereUniqueInput | Prisma.TiendaWhereUniqueInput[]
+  delete?: Prisma.TiendaWhereUniqueInput | Prisma.TiendaWhereUniqueInput[]
+  connect?: Prisma.TiendaWhereUniqueInput | Prisma.TiendaWhereUniqueInput[]
+  update?: Prisma.TiendaUpdateWithWhereUniqueWithoutUsuarioInput | Prisma.TiendaUpdateWithWhereUniqueWithoutUsuarioInput[]
+  updateMany?: Prisma.TiendaUpdateManyWithWhereWithoutUsuarioInput | Prisma.TiendaUpdateManyWithWhereWithoutUsuarioInput[]
+  deleteMany?: Prisma.TiendaScalarWhereInput | Prisma.TiendaScalarWhereInput[]
 }
 
 export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
-}
-
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
-export type DateTimeFieldUpdateOperationsInput = {
-  set?: Date | string
-}
-
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
 }
 
 export type TiendaCreateNestedOneWithoutProductosInput = {
@@ -528,6 +590,79 @@ export type TiendaUpdateOneRequiredWithoutProductosNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.TiendaUpdateToOneWithWhereWithoutProductosInput, Prisma.TiendaUpdateWithoutProductosInput>, Prisma.TiendaUncheckedUpdateWithoutProductosInput>
 }
 
+export type TiendaCreateWithoutUsuarioInput = {
+  codigo: string
+  nombre: string
+  descripcion?: string | null
+  galeria: string
+  piso?: string | null
+  numeroLocal: string
+  telefono?: string | null
+  estado?: boolean
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  productos?: Prisma.ProductoCreateNestedManyWithoutTiendaInput
+}
+
+export type TiendaUncheckedCreateWithoutUsuarioInput = {
+  id?: number
+  codigo: string
+  nombre: string
+  descripcion?: string | null
+  galeria: string
+  piso?: string | null
+  numeroLocal: string
+  telefono?: string | null
+  estado?: boolean
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  productos?: Prisma.ProductoUncheckedCreateNestedManyWithoutTiendaInput
+}
+
+export type TiendaCreateOrConnectWithoutUsuarioInput = {
+  where: Prisma.TiendaWhereUniqueInput
+  create: Prisma.XOR<Prisma.TiendaCreateWithoutUsuarioInput, Prisma.TiendaUncheckedCreateWithoutUsuarioInput>
+}
+
+export type TiendaCreateManyUsuarioInputEnvelope = {
+  data: Prisma.TiendaCreateManyUsuarioInput | Prisma.TiendaCreateManyUsuarioInput[]
+  skipDuplicates?: boolean
+}
+
+export type TiendaUpsertWithWhereUniqueWithoutUsuarioInput = {
+  where: Prisma.TiendaWhereUniqueInput
+  update: Prisma.XOR<Prisma.TiendaUpdateWithoutUsuarioInput, Prisma.TiendaUncheckedUpdateWithoutUsuarioInput>
+  create: Prisma.XOR<Prisma.TiendaCreateWithoutUsuarioInput, Prisma.TiendaUncheckedCreateWithoutUsuarioInput>
+}
+
+export type TiendaUpdateWithWhereUniqueWithoutUsuarioInput = {
+  where: Prisma.TiendaWhereUniqueInput
+  data: Prisma.XOR<Prisma.TiendaUpdateWithoutUsuarioInput, Prisma.TiendaUncheckedUpdateWithoutUsuarioInput>
+}
+
+export type TiendaUpdateManyWithWhereWithoutUsuarioInput = {
+  where: Prisma.TiendaScalarWhereInput
+  data: Prisma.XOR<Prisma.TiendaUpdateManyMutationInput, Prisma.TiendaUncheckedUpdateManyWithoutUsuarioInput>
+}
+
+export type TiendaScalarWhereInput = {
+  AND?: Prisma.TiendaScalarWhereInput | Prisma.TiendaScalarWhereInput[]
+  OR?: Prisma.TiendaScalarWhereInput[]
+  NOT?: Prisma.TiendaScalarWhereInput | Prisma.TiendaScalarWhereInput[]
+  id?: Prisma.IntFilter<"Tienda"> | number
+  codigo?: Prisma.StringFilter<"Tienda"> | string
+  nombre?: Prisma.StringFilter<"Tienda"> | string
+  descripcion?: Prisma.StringNullableFilter<"Tienda"> | string | null
+  galeria?: Prisma.StringFilter<"Tienda"> | string
+  piso?: Prisma.StringNullableFilter<"Tienda"> | string | null
+  numeroLocal?: Prisma.StringFilter<"Tienda"> | string
+  telefono?: Prisma.StringNullableFilter<"Tienda"> | string | null
+  estado?: Prisma.BoolFilter<"Tienda"> | boolean
+  fechaCreacion?: Prisma.DateTimeFilter<"Tienda"> | Date | string
+  fechaModificacion?: Prisma.DateTimeFilter<"Tienda"> | Date | string
+  usuarioId?: Prisma.IntFilter<"Tienda"> | number
+}
+
 export type TiendaCreateWithoutProductosInput = {
   codigo: string
   nombre: string
@@ -539,6 +674,7 @@ export type TiendaCreateWithoutProductosInput = {
   estado?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
+  usuario: Prisma.UsuarioCreateNestedOneWithoutTiendasInput
 }
 
 export type TiendaUncheckedCreateWithoutProductosInput = {
@@ -553,6 +689,7 @@ export type TiendaUncheckedCreateWithoutProductosInput = {
   estado?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
+  usuarioId: number
 }
 
 export type TiendaCreateOrConnectWithoutProductosInput = {
@@ -582,9 +719,68 @@ export type TiendaUpdateWithoutProductosInput = {
   estado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  usuario?: Prisma.UsuarioUpdateOneRequiredWithoutTiendasNestedInput
 }
 
 export type TiendaUncheckedUpdateWithoutProductosInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  codigo?: Prisma.StringFieldUpdateOperationsInput | string
+  nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  galeria?: Prisma.StringFieldUpdateOperationsInput | string
+  piso?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  numeroLocal?: Prisma.StringFieldUpdateOperationsInput | string
+  telefono?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  usuarioId?: Prisma.IntFieldUpdateOperationsInput | number
+}
+
+export type TiendaCreateManyUsuarioInput = {
+  id?: number
+  codigo: string
+  nombre: string
+  descripcion?: string | null
+  galeria: string
+  piso?: string | null
+  numeroLocal: string
+  telefono?: string | null
+  estado?: boolean
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+}
+
+export type TiendaUpdateWithoutUsuarioInput = {
+  codigo?: Prisma.StringFieldUpdateOperationsInput | string
+  nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  galeria?: Prisma.StringFieldUpdateOperationsInput | string
+  piso?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  numeroLocal?: Prisma.StringFieldUpdateOperationsInput | string
+  telefono?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  productos?: Prisma.ProductoUpdateManyWithoutTiendaNestedInput
+}
+
+export type TiendaUncheckedUpdateWithoutUsuarioInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  codigo?: Prisma.StringFieldUpdateOperationsInput | string
+  nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  galeria?: Prisma.StringFieldUpdateOperationsInput | string
+  piso?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  numeroLocal?: Prisma.StringFieldUpdateOperationsInput | string
+  telefono?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  productos?: Prisma.ProductoUncheckedUpdateManyWithoutTiendaNestedInput
+}
+
+export type TiendaUncheckedUpdateManyWithoutUsuarioInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   codigo?: Prisma.StringFieldUpdateOperationsInput | string
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
@@ -641,7 +837,9 @@ export type TiendaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   estado?: boolean
   fechaCreacion?: boolean
   fechaModificacion?: boolean
+  usuarioId?: boolean
   productos?: boolean | Prisma.Tienda$productosArgs<ExtArgs>
+  usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
   _count?: boolean | Prisma.TiendaCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["tienda"]>
 
@@ -657,6 +855,8 @@ export type TiendaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   estado?: boolean
   fechaCreacion?: boolean
   fechaModificacion?: boolean
+  usuarioId?: boolean
+  usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["tienda"]>
 
 export type TiendaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -671,6 +871,8 @@ export type TiendaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   estado?: boolean
   fechaCreacion?: boolean
   fechaModificacion?: boolean
+  usuarioId?: boolean
+  usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["tienda"]>
 
 export type TiendaSelectScalar = {
@@ -685,20 +887,27 @@ export type TiendaSelectScalar = {
   estado?: boolean
   fechaCreacion?: boolean
   fechaModificacion?: boolean
+  usuarioId?: boolean
 }
 
-export type TiendaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "codigo" | "nombre" | "descripcion" | "galeria" | "piso" | "numeroLocal" | "telefono" | "estado" | "fechaCreacion" | "fechaModificacion", ExtArgs["result"]["tienda"]>
+export type TiendaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "codigo" | "nombre" | "descripcion" | "galeria" | "piso" | "numeroLocal" | "telefono" | "estado" | "fechaCreacion" | "fechaModificacion" | "usuarioId", ExtArgs["result"]["tienda"]>
 export type TiendaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   productos?: boolean | Prisma.Tienda$productosArgs<ExtArgs>
+  usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
   _count?: boolean | Prisma.TiendaCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type TiendaIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type TiendaIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type TiendaIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
+}
+export type TiendaIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  usuario?: boolean | Prisma.UsuarioDefaultArgs<ExtArgs>
+}
 
 export type $TiendaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Tienda"
   objects: {
     productos: Prisma.$ProductoPayload<ExtArgs>[]
+    usuario: Prisma.$UsuarioPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -712,6 +921,7 @@ export type $TiendaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     estado: boolean
     fechaCreacion: Date
     fechaModificacion: Date
+    usuarioId: number
   }, ExtArgs["result"]["tienda"]>
   composites: {}
 }
@@ -1107,6 +1317,7 @@ readonly fields: TiendaFieldRefs;
 export interface Prisma__TiendaClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   productos<T extends Prisma.Tienda$productosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tienda$productosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  usuario<T extends Prisma.UsuarioDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UsuarioDefaultArgs<ExtArgs>>): Prisma.Prisma__UsuarioClient<runtime.Types.Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1147,6 +1358,7 @@ export interface TiendaFieldRefs {
   readonly estado: Prisma.FieldRef<"Tienda", 'Boolean'>
   readonly fechaCreacion: Prisma.FieldRef<"Tienda", 'DateTime'>
   readonly fechaModificacion: Prisma.FieldRef<"Tienda", 'DateTime'>
+  readonly usuarioId: Prisma.FieldRef<"Tienda", 'Int'>
 }
     
 
@@ -1401,6 +1613,10 @@ export type TiendaCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensio
    */
   data: Prisma.TiendaCreateManyInput | Prisma.TiendaCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TiendaIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1471,6 +1687,10 @@ export type TiendaUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensio
    * Limit how many Tiendas to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TiendaIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
