@@ -1,6 +1,6 @@
 import {
   IsEmail,
-  IsEnum,
+  IsIn,
   IsNotEmpty,
   IsString,
   Matches,
@@ -64,9 +64,15 @@ export class RegisterDto {
   })
   password: string;
 
-  @IsEnum(RolUsuario, {
-    message:
-      'El rol debe ser ADMINISTRADOR, COMERCIANTE o CLIENTE',
-  })
+  @IsIn(
+    [
+      RolUsuario.COMERCIANTE,
+      RolUsuario.CLIENTE,
+    ],
+    {
+      message:
+        'El rol debe ser COMERCIANTE o CLIENTE',
+    },
+  )
   rol: RolUsuario;
 }

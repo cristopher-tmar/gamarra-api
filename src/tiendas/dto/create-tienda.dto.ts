@@ -1,11 +1,9 @@
 import {
   IsBoolean,
-  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
   MaxLength,
-  Min,
 } from 'class-validator';
 
 export class CreateTiendaDto {
@@ -86,11 +84,4 @@ export class CreateTiendaDto {
   })
   estado?: boolean;
 
-  @IsInt({
-    message: 'El identificador del usuario debe ser un número entero',
-  })
-  @Min(1, {
-    message: 'El identificador del usuario debe ser mayor que 0',
-  })
-  usuarioId: number;
 }

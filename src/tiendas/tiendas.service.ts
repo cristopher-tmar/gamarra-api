@@ -2,21 +2,27 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateTiendaDto } from './dto/create-tienda.dto';
 import { UpdateTiendaDto } from './dto/update-tienda.dto';
+import { RolUsuario } from '../generated/prisma/enums';
 
 @Injectable()
 export class TiendasService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
-  async create(createTiendaDto: CreateTiendaDto) {
-    const tiendaExistente = await this.prisma.tienda.findUnique({
-      where: {
-        codigo: createTiendaDto.codigo,
-      },
-    });
+  async create(
+    createTiendaDto: CreateTiendaDto,
+    usuarioId: number,
+  ) {
+    const tiendaExistente =
+      await this.prisma.tienda.findUnique({
+        where: {
+          codigo: createTiendaDto.codigo,
+        },
+      });
 
     if (tiendaExistente) {
       throw new ConflictException(
@@ -25,9 +31,13 @@ export class TiendasService {
     }
 
     return this.prisma.tienda.create({
-      data: createTiendaDto,
+      data: {
+        ...createTiendaDto,
+        usuarioId,
+      },
     });
   }
+
 
   findAll() {
     return this.prisma.tienda.findMany({
@@ -40,6 +50,32 @@ export class TiendasService {
       },
       orderBy: {
         id: 'desc',
+      },
+    });
+  }
+
+  findMyStores(usuario: {
+    sub: number;
+    rol: string;
+  }) {
+    const esAdministrador =
+      usuario.rol === RolUsuario.ADMINISTRADOR;
+
+    return this.prisma.tienda.findMany({
+      where: esAdministrador
+        ? undefined
+        : {
+          usuarioId: usuario.sub,
+        },
+      include: {
+        _count: {
+          select: {
+            productos: true,
+          },
+        },
+      },
+      orderBy: {
+        fechaCreacion: 'desc',
       },
     });
   }
@@ -59,6 +95,31 @@ export class TiendasService {
 
     return tienda;
   }
+
+  async findOneAuthorized(
+    id: number,
+    usuario: {
+      sub: number;
+      rol: string;
+    },
+  ) {
+    const tienda = await this.findOne(id);
+
+    const esAdministrador =
+      usuario.rol === RolUsuario.ADMINISTRADOR;
+
+    const esPropietario =
+      tienda.usuarioId === usuario.sub;
+
+    if (!esAdministrador && !esPropietario) {
+      throw new ForbiddenException(
+        'No tiene permisos para consultar esta tienda',
+      );
+    }
+
+    return tienda;
+  }
+
 
   async findProductos(id: number) {
     const tienda = await this.prisma.tienda.findUnique({
@@ -83,11 +144,83 @@ export class TiendasService {
     return tienda;
   }
 
+  async findProductosAuthorized(
+    id: number,
+    usuario: {
+      sub: number;
+      rol: string;
+    },
+  ) {
+    const tienda = await this.prisma.tienda.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        productos: {
+          include: {
+            imagenes: {
+              where: {
+                estado: true,
+              },
+              orderBy: [
+                {
+                  principal: 'desc',
+                },
+                {
+                  orden: 'asc',
+                },
+              ],
+            },
+          },
+          orderBy: {
+            fechaCreacion: 'desc',
+          },
+        },
+      },
+    });
+
+    if (!tienda) {
+      throw new NotFoundException(
+        `No existe una tienda con el ID ${id}`,
+      );
+    }
+
+    const esAdministrador =
+      usuario.rol === RolUsuario.ADMINISTRADOR;
+
+    const esPropietario =
+      tienda.usuarioId === usuario.sub;
+
+    if (!esAdministrador && !esPropietario) {
+      throw new ForbiddenException(
+        'No tiene permisos para consultar los productos de esta tienda',
+      );
+    }
+
+    return tienda;
+  }
+
   async update(
     id: number,
     updateTiendaDto: UpdateTiendaDto,
+    usuario: {
+      sub: number;
+      rol: string;
+    },
   ) {
-    await this.findOne(id);
+    const tienda = await this.findOne(id);
+
+    const esAdministrador =
+      usuario.rol === RolUsuario.ADMINISTRADOR;
+
+    const esPropietario =
+      tienda.usuarioId === usuario.sub;
+
+    if (!esAdministrador && !esPropietario) {
+      throw new ForbiddenException(
+        'No tiene permisos para modificar esta tienda',
+      );
+    }
 
     return this.prisma.tienda.update({
       where: {
@@ -97,7 +230,13 @@ export class TiendasService {
     });
   }
 
-  async remove(id: number) {
+  async remove(
+    id: number,
+    usuario: {
+      sub: number;
+      rol: string;
+    },
+  ) {
     const tienda = await this.prisma.tienda.findUnique({
       where: {
         id,
@@ -114,6 +253,18 @@ export class TiendasService {
     if (!tienda) {
       throw new NotFoundException(
         `No existe una tienda con el ID ${id}`,
+      );
+    }
+
+    const esAdministrador =
+      usuario.rol === RolUsuario.ADMINISTRADOR;
+
+    const esPropietario =
+      tienda.usuarioId === usuario.sub;
+
+    if (!esAdministrador && !esPropietario) {
+      throw new ForbiddenException(
+        'No tiene permisos para eliminar esta tienda',
       );
     }
 

@@ -38,6 +38,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('productos')
     .addTag('tiendas')
+    .addBearerAuth()
     .build();
 
   const documentFactory = () =>
