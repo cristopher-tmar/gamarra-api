@@ -8,6 +8,8 @@ import { TiendasModule } from './tiendas/tiendas.module';
 import { HealthModule } from './health/health.module';
 import { envValidationSchema } from './shared/config/env.validation';
 import { AuthModule } from './auth/auth.module';
+import { VisionModule } from './vision/vision.module';
+import { ProductoImagenesModule } from './producto-imagenes/producto-imagenes.module';
 
 @Module({
   imports: [
@@ -26,6 +28,8 @@ import { AuthModule } from './auth/auth.module';
     TiendasModule,
     HealthModule,
     AuthModule,
+    VisionModule,
+    ProductoImagenesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
