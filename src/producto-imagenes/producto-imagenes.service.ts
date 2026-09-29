@@ -8,6 +8,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { VisionService } from '../vision/vision.service';
 import { EstadoProcesamientoImagen } from '../generated/prisma/enums';
 import type { JwtPayload } from '../auth/guards/jwt-auth.guard';
+import { ImageStorage } from './interfaces/image-storage.interface';
 
 export interface ImagenParaProcesar {
     buffer: Buffer;
@@ -20,6 +21,7 @@ export class ProductoImagenesService {
     constructor(
         private readonly prisma: PrismaService,
         private readonly visionService: VisionService,
+        private readonly imageStorage: ImageStorage,
     ) { }
 
     async procesarEmbedding(
@@ -159,5 +161,88 @@ export class ProductoImagenesService {
             throw error;
         }
 
+    }
+
+    async registrarYProcesarImagen(
+        productoId: number,
+        archivo: ImagenParaProcesar,
+        correlationId: string,
+        usuario: JwtPayload,
+    ) {
+        const producto =
+            await this.prisma.producto.findUnique({
+                where: {
+                    id: productoId,
+                },
+                include: {
+                    tienda: true,
+                    _count: {
+                        select: {
+                            imagenes: true,
+                        },
+                    },
+                },
+            });
+
+        if (!producto) {
+            throw new NotFoundException(
+                `No existe un producto con el ID ${productoId}`,
+            );
+        }
+
+        const esAdministrador =
+            usuario.rol === RolUsuario.ADMINISTRADOR;
+
+        const esPropietario =
+            producto.tienda.usuarioId === usuario.sub;
+
+        if (!esAdministrador && !esPropietario) {
+            throw new ForbiddenException(
+                'No tiene permisos para registrar imágenes en este producto',
+            );
+        }
+
+        const imagenAlmacenada =
+            await this.imageStorage.guardar(
+                productoId,
+                archivo,
+            );
+
+        let imagenRegistrada;
+
+        try {
+            imagenRegistrada =
+                await this.prisma.productoImagen.create({
+                    data: {
+                        productoId,
+                        url: imagenAlmacenada.url,
+                        nombreAlmacenado:
+                            imagenAlmacenada.nombreAlmacenado,
+                        nombreOriginal: archivo.originalname,
+                        mimeType: archivo.mimetype,
+                        tamanioBytes: archivo.buffer.length,
+                        principal:
+                            producto._count.imagenes === 0,
+                        orden:
+                            producto._count.imagenes + 1,
+                        estado: true,
+                        estadoProcesamiento:
+                            EstadoProcesamientoImagen.PENDIENTE,
+                    },
+                });
+        } catch (error: unknown) {
+            await this.imageStorage.eliminar(
+                imagenAlmacenada.nombreAlmacenado,
+            );
+
+            throw error;
+        }
+
+        return this.procesarEmbedding(
+            imagenRegistrada.id,
+            archivo,
+            correlationId,
+            usuario,
+        );
     }
 }

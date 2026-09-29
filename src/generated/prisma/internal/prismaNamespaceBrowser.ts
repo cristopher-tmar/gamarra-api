@@ -128,6 +128,7 @@ export const ProductoImagenScalarFieldEnum = {
   id: 'id',
   productoId: 'productoId',
   url: 'url',
+  nombreAlmacenado: 'nombreAlmacenado',
   nombreOriginal: 'nombreOriginal',
   mimeType: 'mimeType',
   tamanioBytes: 'tamanioBytes',

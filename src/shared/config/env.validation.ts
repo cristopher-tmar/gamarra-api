@@ -65,4 +65,37 @@ export const envValidationSchema = Joi.object({
         'La variable VISION_SERVICE_TIMEOUT_MS debe ser como mínimo 1000 milisegundos',
     }),
 
+  SUPABASE_URL: Joi.string()
+    .uri()
+    .required()
+    .messages({
+      'string.empty':
+        'La variable SUPABASE_URL es obligatoria',
+      'string.uri':
+        'La variable SUPABASE_URL debe contener una URL válida',
+      'any.required':
+        'La variable SUPABASE_URL es obligatoria',
+    }),
+
+  SUPABASE_SERVICE_ROLE_KEY: Joi.string()
+    .min(20)
+    .required()
+    .messages({
+      'string.empty':
+        'La variable SUPABASE_SERVICE_ROLE_KEY es obligatoria',
+      'string.min':
+        'La variable SUPABASE_SERVICE_ROLE_KEY no es válida',
+      'any.required':
+        'La variable SUPABASE_SERVICE_ROLE_KEY es obligatoria',
+    }),
+
+  SUPABASE_STORAGE_BUCKET: Joi.string()
+    .required()
+    .messages({
+      'string.empty':
+        'La variable SUPABASE_STORAGE_BUCKET es obligatoria',
+      'any.required':
+        'La variable SUPABASE_STORAGE_BUCKET es obligatoria',
+    }),
+
 });

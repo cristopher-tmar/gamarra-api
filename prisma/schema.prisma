@@ -71,6 +71,7 @@ model ProductoImagen {
   id                  Int                         @id @default(autoincrement())
   productoId          Int                         @map("producto_id")
   url                 String                      @db.VarChar(500)
+  nombreAlmacenado    String?                     @map("nombre_almacenado") @db.VarChar(500)
   nombreOriginal      String?                     @map("nombre_original") @db.VarChar(255)
   mimeType            String?                     @map("mime_type") @db.VarChar(100)
   tamanioBytes        Int?                        @map("tamanio_bytes")
