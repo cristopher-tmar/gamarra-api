@@ -1,6 +1,9 @@
 import {
+    BadRequestException,
+    ConflictException,
     ForbiddenException,
     Injectable,
+    Logger,
     NotFoundException,
 } from '@nestjs/common';
 import { RolUsuario } from '../generated/prisma/enums';
@@ -9,6 +12,8 @@ import { VisionService } from '../vision/vision.service';
 import { EstadoProcesamientoImagen } from '../generated/prisma/enums';
 import type { JwtPayload } from '../auth/guards/jwt-auth.guard';
 import { ImageStorage } from './interfaces/image-storage.interface';
+import { ReordenarImagenesDto } from './dto/reordenar-imagenes.dto';
+import { createHash } from 'node:crypto';
 
 export interface ImagenParaProcesar {
     buffer: Buffer;
@@ -23,6 +28,10 @@ export class ProductoImagenesService {
         private readonly visionService: VisionService,
         private readonly imageStorage: ImageStorage,
     ) { }
+
+    private readonly logger = new Logger(
+        ProductoImagenesService.name,
+    );
 
     async procesarEmbedding(
         imagenId: number,
@@ -202,6 +211,27 @@ export class ProductoImagenesService {
             );
         }
 
+        // Se calcula el hash antes de subir la imagen a Supabase
+        const hashArchivo = createHash('sha256')
+            .update(archivo.buffer)
+            .digest('hex');
+
+        // Se comprueba si el mismo archivo ya está registrado
+        const imagenDuplicada =
+            await this.prisma.productoImagen.findFirst({
+                where: {
+                    productoId,
+                    hashArchivo,
+                },
+            });
+
+        if (imagenDuplicada) {
+            throw new ConflictException(
+                'Esta imagen ya se encuentra registrada en el producto',
+            );
+        }
+
+        // Solo se sube a Supabase si no está duplicada
         const imagenAlmacenada =
             await this.imageStorage.guardar(
                 productoId,
@@ -221,6 +251,7 @@ export class ProductoImagenesService {
                         nombreOriginal: archivo.originalname,
                         mimeType: archivo.mimetype,
                         tamanioBytes: archivo.buffer.length,
+                        hashArchivo,
                         principal:
                             producto._count.imagenes === 0,
                         orden:
@@ -245,4 +276,418 @@ export class ProductoImagenesService {
             usuario,
         );
     }
+
+    async listarImagenesPorProducto(
+        productoId: number,
+        usuario: JwtPayload,
+    ) {
+        const producto =
+            await this.prisma.producto.findUnique({
+                where: {
+                    id: productoId,
+                },
+                include: {
+                    tienda: true,
+                },
+            });
+
+        if (!producto) {
+            throw new NotFoundException(
+                `No existe un producto con el ID ${productoId}`,
+            );
+        }
+
+        const esAdministrador =
+            usuario.rol === RolUsuario.ADMINISTRADOR;
+
+        const esPropietario =
+            producto.tienda.usuarioId === usuario.sub;
+
+        if (!esAdministrador && !esPropietario) {
+            throw new ForbiddenException(
+                'No tiene permisos para consultar las imágenes de este producto',
+            );
+        }
+
+        return this.prisma.productoImagen.findMany({
+            where: {
+                productoId,
+            },
+            orderBy: [
+                {
+                    principal: 'desc',
+                },
+                {
+                    orden: 'asc',
+                },
+            ],
+        });
+    }
+
+    async establecerComoPrincipal(
+        imagenId: number,
+        usuario: JwtPayload,
+    ) {
+        const imagen =
+            await this.prisma.productoImagen.findUnique({
+                where: {
+                    id: imagenId,
+                },
+                include: {
+                    producto: {
+                        include: {
+                            tienda: true,
+                        },
+                    },
+                },
+            });
+
+        if (!imagen) {
+            throw new NotFoundException(
+                `No existe una imagen de producto con el ID ${imagenId}`,
+            );
+        }
+
+        const esAdministrador =
+            usuario.rol === RolUsuario.ADMINISTRADOR;
+
+        const esPropietario =
+            imagen.producto.tienda.usuarioId ===
+            usuario.sub;
+
+        if (!esAdministrador && !esPropietario) {
+            throw new ForbiddenException(
+                'No tiene permisos para modificar esta imagen',
+            );
+        }
+
+        const imagenesProducto =
+            await this.prisma.productoImagen.findMany({
+                where: {
+                    productoId: imagen.productoId,
+                },
+                orderBy: [
+                    {
+                        orden: 'asc',
+                    },
+                    {
+                        id: 'asc',
+                    },
+                ],
+            });
+
+        const imagenesReordenadas = [
+            imagen,
+            ...imagenesProducto.filter(
+                (item) => item.id !== imagenId,
+            ),
+        ];
+
+        await this.prisma.$transaction(
+            imagenesReordenadas.map(
+                (item, indice) =>
+                    this.prisma.productoImagen.update({
+                        where: {
+                            id: item.id,
+                        },
+                        data: {
+                            orden: indice + 1,
+                            principal: item.id === imagenId,
+                        },
+                    }),
+            ),
+        );
+
+        return {
+            mensaje:
+                'La imagen fue establecida como principal correctamente',
+            imagenId,
+            productoId: imagen.productoId,
+            principal: true,
+            orden: 1,
+        };
+    }
+
+    async eliminarImagen(
+        imagenId: number,
+        usuario: JwtPayload,
+    ) {
+        const imagen =
+            await this.prisma.productoImagen.findUnique({
+                where: {
+                    id: imagenId,
+                },
+                include: {
+                    producto: {
+                        include: {
+                            tienda: true,
+                        },
+                    },
+                },
+            });
+
+        if (!imagen) {
+            throw new NotFoundException(
+                `No existe una imagen de producto con el ID ${imagenId}`,
+            );
+        }
+
+        const esAdministrador =
+            usuario.rol === RolUsuario.ADMINISTRADOR;
+
+        const esPropietario =
+            imagen.producto.tienda.usuarioId ===
+            usuario.sub;
+
+        if (!esAdministrador && !esPropietario) {
+            throw new ForbiddenException(
+                'No tiene permisos para eliminar esta imagen',
+            );
+        }
+
+        const imagenesRestantes =
+            await this.prisma.productoImagen.findMany({
+                where: {
+                    productoId: imagen.productoId,
+                    id: {
+                        not: imagenId,
+                    },
+                },
+                orderBy: [
+                    {
+                        principal: 'desc',
+                    },
+                    {
+                        orden: 'asc',
+                    },
+                    {
+                        id: 'asc',
+                    },
+                ],
+            });
+
+        const nuevaPrincipalId =
+            imagen.principal
+                ? imagenesRestantes[0]?.id
+                : imagenesRestantes.find(
+                    (item) => item.principal,
+                )?.id ?? imagenesRestantes[0]?.id;
+
+        await this.prisma.$transaction(
+            async (transaction) => {
+                await transaction.productoImagen.delete({
+                    where: {
+                        id: imagenId,
+                    },
+                });
+
+                for (
+                    let indice = 0;
+                    indice < imagenesRestantes.length;
+                    indice++
+                ) {
+                    const imagenRestante =
+                        imagenesRestantes[indice];
+
+                    await transaction.productoImagen.update({
+                        where: {
+                            id: imagenRestante.id,
+                        },
+                        data: {
+                            orden: indice + 1,
+                            principal:
+                                imagenRestante.id === nuevaPrincipalId,
+                        },
+                    });
+                }
+            },
+        );
+
+        let archivoEliminado = true;
+
+        if (imagen.nombreAlmacenado) {
+            try {
+                await this.imageStorage.eliminar(
+                    imagen.nombreAlmacenado,
+                );
+            } catch (error: unknown) {
+                archivoEliminado = false;
+
+                this.logger.error(
+                    `No se pudo eliminar de Supabase el archivo ${imagen.nombreAlmacenado}`,
+                    error instanceof Error
+                        ? error.stack
+                        : String(error),
+                );
+            }
+        }
+
+        return {
+            mensaje: 'Imagen eliminada correctamente',
+            imagenId,
+            productoId: imagen.productoId,
+            nuevaImagenPrincipalId:
+                nuevaPrincipalId ?? null,
+            archivoEliminado,
+        };
+    }
+
+    async reordenarImagenes(
+        productoId: number,
+        reordenarImagenesDto: ReordenarImagenesDto,
+        usuario: JwtPayload,
+    ) {
+        const producto =
+            await this.prisma.producto.findUnique({
+                where: {
+                    id: productoId,
+                },
+                include: {
+                    tienda: true,
+                    imagenes: true,
+                },
+            });
+
+        if (!producto) {
+            throw new NotFoundException(
+                `No existe un producto con el ID ${productoId}`,
+            );
+        }
+
+        const esAdministrador =
+            usuario.rol === RolUsuario.ADMINISTRADOR;
+
+        const esPropietario =
+            producto.tienda.usuarioId === usuario.sub;
+
+        if (!esAdministrador && !esPropietario) {
+            throw new ForbiddenException(
+                'No tiene permisos para reordenar las imágenes de este producto',
+            );
+        }
+
+        const imagenesSolicitadas =
+            reordenarImagenesDto.imagenes;
+
+        const idsSolicitados =
+            imagenesSolicitadas.map(
+                (imagen) => imagen.imagenId,
+            );
+
+        const ordenesSolicitados =
+            imagenesSolicitadas.map(
+                (imagen) => imagen.orden,
+            );
+
+        const idsUnicos = new Set(idsSolicitados);
+        const ordenesUnicos =
+            new Set(ordenesSolicitados);
+
+        if (idsUnicos.size !== idsSolicitados.length) {
+            throw new BadRequestException(
+                'La lista contiene identificadores de imágenes repetidos',
+            );
+        }
+
+        if (
+            ordenesUnicos.size !==
+            ordenesSolicitados.length
+        ) {
+            throw new BadRequestException(
+                'La lista contiene valores de orden repetidos',
+            );
+        }
+
+        if (
+            imagenesSolicitadas.length !==
+            producto.imagenes.length
+        ) {
+            throw new BadRequestException(
+                'Debe proporcionar todas las imágenes del producto',
+            );
+        }
+
+        const idsProducto = new Set(
+            producto.imagenes.map(
+                (imagen) => imagen.id,
+            ),
+        );
+
+        const contieneImagenAjena =
+            idsSolicitados.some(
+                (imagenId) =>
+                    !idsProducto.has(imagenId),
+            );
+
+        if (contieneImagenAjena) {
+            throw new BadRequestException(
+                'Una o más imágenes no pertenecen al producto indicado',
+            );
+        }
+
+        const ordenesEsperados =
+            Array.from(
+                {
+                    length: imagenesSolicitadas.length,
+                },
+                (_, indice) => indice + 1,
+            );
+
+        const ordenesOrdenados = [
+            ...ordenesSolicitados,
+        ].sort((a, b) => a - b);
+
+        const ordenConsecutivo =
+            ordenesOrdenados.every(
+                (orden, indice) =>
+                    orden === ordenesEsperados[indice],
+            );
+
+        if (!ordenConsecutivo) {
+            throw new BadRequestException(
+                `Los órdenes deben ser consecutivos desde 1 hasta ${imagenesSolicitadas.length}`,
+            );
+        }
+
+        const imagenPrincipalId =
+            imagenesSolicitadas.find(
+                (imagen) => imagen.orden === 1,
+            )?.imagenId;
+
+        await this.prisma.$transaction(
+            imagenesSolicitadas.map(
+                (imagen) =>
+                    this.prisma.productoImagen.update({
+                        where: {
+                            id: imagen.imagenId,
+                        },
+                        data: {
+                            orden: imagen.orden,
+                            principal:
+                                imagen.imagenId ===
+                                imagenPrincipalId,
+                        },
+                    }),
+            ),
+        );
+
+        const imagenesActualizadas =
+            await this.prisma.productoImagen.findMany({
+                where: {
+                    productoId,
+                },
+                orderBy: {
+                    orden: 'asc',
+                },
+            });
+
+        return {
+            mensaje:
+                'Las imágenes fueron reordenadas correctamente',
+            productoId,
+            imagenPrincipalId,
+            imagenes: imagenesActualizadas,
+        };
+    }
+
 }

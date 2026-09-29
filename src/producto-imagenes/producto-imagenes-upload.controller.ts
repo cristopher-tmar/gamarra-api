@@ -8,6 +8,9 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
+  Get,
+  Body,
+  Patch,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
@@ -25,6 +28,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { RolUsuario } from '../generated/prisma/enums';
 import type { RequestWithCorrelationId } from '../shared/http/middleware/correlation-id.middleware';
 import { ProductoImagenesService } from './producto-imagenes.service';
+import { ReordenarImagenesDto } from './dto/reordenar-imagenes.dto';
 
 interface UploadedImage {
   buffer: Buffer;
@@ -41,7 +45,7 @@ export class ProductoImagenesUploadController {
   constructor(
     private readonly productoImagenesService:
       ProductoImagenesService,
-  ) {}
+  ) { }
 
   @Post(':productoId/imagenes')
   @ApiBearerAuth()
@@ -94,4 +98,48 @@ export class ProductoImagenesUploadController {
         request.usuario,
       );
   }
+
+  @Get(':productoId/imagenes')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(
+    RolUsuario.ADMINISTRADOR,
+    RolUsuario.COMERCIANTE,
+  )
+  listarImagenes(
+    @Param('productoId', ParseIntPipe)
+    productoId: number,
+    @Req()
+    request: AuthenticatedCorrelationRequest,
+  ) {
+    return this.productoImagenesService
+      .listarImagenesPorProducto(
+        productoId,
+        request.usuario,
+      );
+  }
+
+  @Patch(':productoId/imagenes/orden')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(
+    RolUsuario.ADMINISTRADOR,
+    RolUsuario.COMERCIANTE,
+  )
+  reordenarImagenes(
+    @Param('productoId', ParseIntPipe)
+    productoId: number,
+    @Body()
+    reordenarImagenesDto: ReordenarImagenesDto,
+    @Req()
+    request: AuthenticatedCorrelationRequest,
+  ) {
+    return this.productoImagenesService
+      .reordenarImagenes(
+        productoId,
+        reordenarImagenesDto,
+        request.usuario,
+      );
+  }
+
 }

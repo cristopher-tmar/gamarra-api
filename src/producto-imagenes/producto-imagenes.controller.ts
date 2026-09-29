@@ -8,6 +8,8 @@ import {
     UploadedFile,
     UseInterceptors,
     UseGuards,
+    Patch,
+    Delete,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
@@ -33,7 +35,7 @@ interface UploadedImage {
 }
 
 type AuthenticatedCorrelationRequest =
-  AuthenticatedRequest & RequestWithCorrelationId;
+    AuthenticatedRequest & RequestWithCorrelationId;
 
 @ApiTags('producto-imagenes')
 @Controller('producto-imagenes')
@@ -90,6 +92,45 @@ export class ProductoImagenesController {
             imagenId,
             archivo,
             request.correlationId,
+            request.usuario,
+        );
+    }
+
+    @Patch(':imagenId/principal')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(
+        RolUsuario.ADMINISTRADOR,
+        RolUsuario.COMERCIANTE,
+    )
+    establecerComoPrincipal(
+        @Param('imagenId', ParseIntPipe)
+        imagenId: number,
+        @Req()
+        request: AuthenticatedCorrelationRequest,
+    ) {
+        return this.productoImagenesService
+            .establecerComoPrincipal(
+                imagenId,
+                request.usuario,
+            );
+    }
+
+    @Delete(':imagenId')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(
+        RolUsuario.ADMINISTRADOR,
+        RolUsuario.COMERCIANTE,
+    )
+    eliminarImagen(
+        @Param('imagenId', ParseIntPipe)
+        imagenId: number,
+        @Req()
+        request: AuthenticatedCorrelationRequest,
+    ) {
+        return this.productoImagenesService.eliminarImagen(
+            imagenId,
             request.usuario,
         );
     }
