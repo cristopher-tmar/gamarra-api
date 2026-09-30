@@ -25,8 +25,14 @@
     "db:restart": "docker compose restart",
     "db:migrate": "prisma migrate dev --config prisma7.config.ts",
     "db:deploy": "prisma migrate deploy --config prisma7.config.ts",
-    "db:seed": "prisma db seed --config prisma7.config.ts",
-    "dev:full": "docker compose up -d --wait && prisma migrate deploy --config prisma7.config.ts && prisma db seed --config prisma7.config.ts && nest start --watch"
+    "db:reset": "prisma migrate reset --force --config prisma7.config.ts",
+    "seed": "tsx prisma/seed.ts",
+    "seed:images": "tsx prisma/seed-images.ts",
+    "seed:all": "npm run seed && npm run seed:images",
+    "db:rebuild": "npm run db:reset && npm run seed",
+    "dev:seed-images": "wait-on http-get://localhost:3000/api/health && npm run seed:images",
+    "storage:clean": "tsx prisma/clean-storage.ts",
+    "demo:start": "npm run db:up && npm run storage:clean && npm run db:reset && npm run seed && concurrently --names API,IMAGENES --prefix-colors cyan,magenta \"npm run start:dev\" \"npm run dev:seed-images\""
   },
   "dependencies": {
     "@nestjs/axios": "^12.0.1",
@@ -60,6 +66,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^24.0.0",
     "@types/supertest": "^7.0.0",
+    "concurrently": "^10.0.5",
     "jest": "^30.0.0",
     "oxlint": "^1.58.0",
     "oxlint-tsgolint": "^7.0.2001",
@@ -72,6 +79,7 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "tsx": "^4.23.13",
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.2",
+    "wait-on": "^9.5.1"
   }
 }
