@@ -21,6 +21,20 @@ export interface ImagenParaProcesar {
     mimetype: string;
 }
 
+interface ProductoSimilar {
+    productoId: number;
+    codigo: string;
+    nombre: string;
+    categoria: string;
+    descripcion: string | null;
+    precio: unknown;
+    stock: number;
+    imagenId: number;
+    imagenUrl: string;
+    distancia: number;
+    similitud: number;
+}
+
 @Injectable()
 export class ProductoImagenesService {
     constructor(
@@ -309,19 +323,44 @@ export class ProductoImagenesService {
             );
         }
 
-        return this.prisma.productoImagen.findMany({
-            where: {
-                productoId,
-            },
-            orderBy: [
-                {
-                    principal: 'desc',
+        const imagenes =
+            await this.prisma.productoImagen.findMany({
+                where: {
+                    productoId,
+                    estado: true,
                 },
-                {
-                    orden: 'asc',
+                select: {
+                    id: true,
+                    url: true,
+                    nombreOriginal: true,
+                    mimeType: true,
+                    tamanioBytes: true,
+                    ancho: true,
+                    alto: true,
+                    principal: true,
+                    orden: true,
+                    estado: true,
+                    estadoProcesamiento: true,
+                    modeloEmbedding: true,
+                    fechaProcesamiento: true,
+                    fechaCreacion: true,
+                    fechaModificacion: true,
                 },
-            ],
-        });
+                orderBy: [
+                    {
+                        principal: 'desc',
+                    },
+                    {
+                        orden: 'asc',
+                    },
+                ],
+            });
+
+        return {
+            productoId,
+            total: imagenes.length,
+            imagenes,
+        };
     }
 
     async establecerComoPrincipal(
@@ -687,6 +726,95 @@ export class ProductoImagenesService {
             productoId,
             imagenPrincipalId,
             imagenes: imagenesActualizadas,
+        };
+    }
+
+    async buscarProductosPorImagen(
+        archivo: ImagenParaProcesar,
+        correlationId: string,
+    ) {
+        const resultadoVision =
+            await this.visionService.generarEmbedding(
+                archivo,
+                correlationId,
+            );
+
+        if (resultadoVision.dimension !== 512) {
+            throw new BadRequestException(
+                `El servicio de visión devolvió una dimensión inválida: ${resultadoVision.dimension}`,
+            );
+        }
+
+        const vectorTexto =
+            `[${resultadoVision.embedding.join(',')}]`;
+
+        const productosSimilares =
+            await this.prisma.$queryRaw<
+                ProductoSimilar[]
+            >`
+            WITH coincidencias AS (
+                SELECT
+                    p."id" AS "productoId",
+                    p."codigo",
+                    p."nombre",
+                    p."categoria",
+                    p."descripcion",
+                    p."precio",
+                    p."stock",
+                    pi."id" AS "imagenId",
+                    pi."url" AS "imagenUrl",
+                    pi."embedding" <=> ${vectorTexto}::vector
+                        AS "distancia",
+                    ROW_NUMBER() OVER (
+                        PARTITION BY p."id"
+                        ORDER BY
+                            pi."embedding" <=> ${vectorTexto}::vector
+                    ) AS "posicion"
+                FROM "producto_imagen" pi
+                INNER JOIN "producto" p
+                    ON p."id" = pi."producto_id"
+                WHERE pi."estado" = true
+                  AND p."estado" = true
+                  AND pi."estado_procesamiento" = 'PROCESADA'
+                  AND pi."embedding" IS NOT NULL
+            )
+            SELECT
+                "productoId",
+                "codigo",
+                "nombre",
+                "categoria",
+                "descripcion",
+                "precio",
+                "stock",
+                "imagenId",
+                "imagenUrl",
+                "distancia",
+                1 - "distancia" AS "similitud"
+            FROM coincidencias
+            WHERE "posicion" = 1
+            ORDER BY "distancia" ASC
+            LIMIT 10
+        `;
+
+        return {
+            mensaje:
+                'Búsqueda visual realizada correctamente',
+            consulta: {
+                nombreOriginal: archivo.originalname,
+                mimeType: archivo.mimetype,
+                modelo: resultadoVision.modelo,
+                dimension: resultadoVision.dimension,
+                tiempoProcesamientoMs:
+                    resultadoVision.tiempoProcesamientoMs,
+            },
+            total: productosSimilares.length,
+            productos: productosSimilares.map(
+                (producto) => ({
+                    ...producto,
+                    distancia: Number(producto.distancia),
+                    similitud: Number(producto.similitud),
+                }),
+            ),
         };
     }
 

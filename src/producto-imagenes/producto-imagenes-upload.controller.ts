@@ -47,6 +47,52 @@ export class ProductoImagenesUploadController {
       ProductoImagenesService,
   ) { }
 
+  @Post('busqueda-visual')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['archivo'],
+      properties: {
+        archivo: {
+          type: 'string',
+          format: 'binary',
+          description:
+            'Imagen que se utilizará para buscar productos similares',
+        },
+      },
+    },
+  })
+  @UseInterceptors(
+    FileInterceptor('archivo', {
+      limits: {
+        fileSize: 10 * 1024 * 1024,
+      },
+    }),
+  )
+
+  
+  buscarProductosPorImagen(
+    @UploadedFile()
+    archivo: UploadedImage,
+    @Req()
+    request: AuthenticatedCorrelationRequest,
+  ) {
+    if (!archivo) {
+      throw new BadRequestException(
+        'Debe proporcionar una imagen para realizar la búsqueda visual',
+      );
+    }
+
+    return this.productoImagenesService
+      .buscarProductosPorImagen(
+        archivo,
+        request.correlationId,
+      );
+  }
+
   @Post(':productoId/imagenes')
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)
