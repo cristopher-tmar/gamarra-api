@@ -745,6 +745,14 @@ export class ProductoImagenesService {
             );
         }
 
+        /*
+         * Similitud coseno mínima aceptada.
+         *
+         * 0.80 equivale a 80 % de similitud matemática.
+         * No representa una probabilidad ni exactitud del modelo.
+         */
+        const similitudMinima = 0.80;
+
         const vectorTexto =
             `[${resultadoVision.embedding.join(',')}]`;
 
@@ -752,53 +760,73 @@ export class ProductoImagenesService {
             await this.prisma.$queryRaw<
                 ProductoSimilar[]
             >`
-            WITH coincidencias AS (
-                SELECT
-                    p."id" AS "productoId",
-                    p."codigo",
-                    p."nombre",
-                    p."categoria",
-                    p."descripcion",
-                    p."precio",
-                    p."stock",
-                    pi."id" AS "imagenId",
-                    pi."url" AS "imagenUrl",
-                    pi."embedding" <=> ${vectorTexto}::vector
-                        AS "distancia",
-                    ROW_NUMBER() OVER (
-                        PARTITION BY p."id"
-                        ORDER BY
-                            pi."embedding" <=> ${vectorTexto}::vector
-                    ) AS "posicion"
-                FROM "producto_imagen" pi
-                INNER JOIN "producto" p
-                    ON p."id" = pi."producto_id"
-                WHERE pi."estado" = true
-                  AND p."estado" = true
-                  AND pi."estado_procesamiento" = 'PROCESADA'
-                  AND pi."embedding" IS NOT NULL
-            )
-            SELECT
-                "productoId",
-                "codigo",
-                "nombre",
-                "categoria",
-                "descripcion",
-                "precio",
-                "stock",
-                "imagenId",
-                "imagenUrl",
-                "distancia",
-                1 - "distancia" AS "similitud"
-            FROM coincidencias
-            WHERE "posicion" = 1
-            ORDER BY "distancia" ASC
-            LIMIT 10
-        `;
+      WITH coincidencias AS (
+        SELECT
+          p."id" AS "productoId",
+          p."codigo",
+          p."nombre",
+          p."categoria",
+          p."descripcion",
+          p."precio",
+          p."stock",
+          pi."id" AS "imagenId",
+          pi."url" AS "imagenUrl",
+          pi."embedding" <=> ${vectorTexto}::vector
+            AS "distancia",
+          ROW_NUMBER() OVER (
+            PARTITION BY p."id"
+            ORDER BY
+              pi."embedding" <=> ${vectorTexto}::vector
+          ) AS "posicion"
+        FROM "producto_imagen" pi
+        INNER JOIN "producto" p
+          ON p."id" = pi."producto_id"
+        WHERE pi."estado" = true
+          AND p."estado" = true
+          AND pi."estado_procesamiento" = 'PROCESADA'
+          AND pi."embedding" IS NOT NULL
+      )
+      SELECT
+        "productoId",
+        "codigo",
+        "nombre",
+        "categoria",
+        "descripcion",
+        "precio",
+        "stock",
+        "imagenId",
+        "imagenUrl",
+        "distancia",
+        1 - "distancia" AS "similitud"
+      FROM coincidencias
+      WHERE "posicion" = 1
+        AND 1 - "distancia" >= ${similitudMinima}
+      ORDER BY "distancia" ASC
+    `;
+
+        const productos = productosSimilares.map(
+            (producto) => {
+                const distancia =
+                    Number(producto.distancia);
+
+                const similitud =
+                    Number(producto.similitud);
+
+                return {
+                    ...producto,
+                    distancia,
+                    similitud,
+                    similitudPorcentaje:
+                        Math.round(similitud * 10000) / 100,
+                };
+            },
+        );
 
         return {
             mensaje:
-                'Búsqueda visual realizada correctamente',
+                productos.length > 0
+                    ? 'Búsqueda visual realizada correctamente'
+                    : 'No se encontraron productos con el nivel mínimo de similitud',
             consulta: {
                 nombreOriginal: archivo.originalname,
                 mimeType: archivo.mimetype,
@@ -807,14 +835,13 @@ export class ProductoImagenesService {
                 tiempoProcesamientoMs:
                     resultadoVision.tiempoProcesamientoMs,
             },
-            total: productosSimilares.length,
-            productos: productosSimilares.map(
-                (producto) => ({
-                    ...producto,
-                    distancia: Number(producto.distancia),
-                    similitud: Number(producto.similitud),
-                }),
-            ),
+            criterioBusqueda: {
+                similitudMinima,
+                similitudMinimaPorcentaje:
+                    similitudMinima * 100,
+            },
+            total: productos.length,
+            productos,
         };
     }
 
