@@ -19,9 +19,29 @@ model Usuario {
   fechaCreacion     DateTime   @default(now()) @map("fecha_creacion")
   fechaModificacion DateTime   @updatedAt @map("fecha_modificacion")
 
-  tiendas Tienda[]
+  tiendas         Tienda[]
+  sesionesRefresh SesionRefresh[]
 
   @@map("usuario")
+}
+
+model SesionRefresh {
+  id                String    @id @default(uuid()) @db.Uuid
+  usuarioId         Int       @map("usuario_id")
+  tokenHash         String    @map("token_hash") @db.VarChar(255)
+  fechaExpiracion   DateTime  @map("fecha_expiracion")
+  fechaRevocacion   DateTime? @map("fecha_revocacion")
+  userAgent         String?   @map("user_agent") @db.VarChar(500)
+  direccionIp       String?   @map("direccion_ip") @db.VarChar(64)
+  fechaCreacion     DateTime  @default(now()) @map("fecha_creacion")
+  fechaModificacion DateTime  @updatedAt @map("fecha_modificacion")
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+  @@index([fechaExpiracion])
+  @@index([fechaRevocacion])
+  @@map("sesion_refresh")
 }
 
 model Tienda {

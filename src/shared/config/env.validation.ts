@@ -98,4 +98,20 @@ export const envValidationSchema = Joi.object({
         'La variable SUPABASE_STORAGE_BUCKET es obligatoria',
     }),
 
+
+  VISUAL_SEARCH_MIN_SIMILARITY: Joi.number()
+    .min(0)
+    .max(1)
+    .default(0.8)
+    .messages({
+      'number.base':
+        'La variable VISUAL_SEARCH_MIN_SIMILARITY debe ser numérica',
+      'number.min':
+        'La variable VISUAL_SEARCH_MIN_SIMILARITY no puede ser menor que 0',
+      'number.max':
+        'La variable VISUAL_SEARCH_MIN_SIMILARITY no puede ser mayor que 1',
+    }),
+
 });
+
+// node -e "console.log(require('crypto').randomBytes(48).toString('base64'))" --Generador Token

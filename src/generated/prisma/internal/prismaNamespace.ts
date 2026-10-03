@@ -398,6 +398,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   Usuario: 'Usuario',
+  SesionRefresh: 'SesionRefresh',
   Tienda: 'Tienda',
   Producto: 'Producto',
   ProductoImagen: 'ProductoImagen'
@@ -416,7 +417,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "usuario" | "tienda" | "producto" | "productoImagen"
+    modelProps: "usuario" | "sesionRefresh" | "tienda" | "producto" | "productoImagen"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -491,6 +492,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UsuarioCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UsuarioCountAggregateOutputType> | number
+        }
+      }
+    }
+    SesionRefresh: {
+      payload: Prisma.$SesionRefreshPayload<ExtArgs>
+      fields: Prisma.SesionRefreshFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SesionRefreshFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SesionRefreshPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SesionRefreshFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SesionRefreshPayload>
+        }
+        findFirst: {
+          args: Prisma.SesionRefreshFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SesionRefreshPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SesionRefreshFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SesionRefreshPayload>
+        }
+        findMany: {
+          args: Prisma.SesionRefreshFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SesionRefreshPayload>[]
+        }
+        create: {
+          args: Prisma.SesionRefreshCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SesionRefreshPayload>
+        }
+        createMany: {
+          args: Prisma.SesionRefreshCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SesionRefreshCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SesionRefreshPayload>[]
+        }
+        delete: {
+          args: Prisma.SesionRefreshDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SesionRefreshPayload>
+        }
+        update: {
+          args: Prisma.SesionRefreshUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SesionRefreshPayload>
+        }
+        deleteMany: {
+          args: Prisma.SesionRefreshDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SesionRefreshUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SesionRefreshUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SesionRefreshPayload>[]
+        }
+        upsert: {
+          args: Prisma.SesionRefreshUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SesionRefreshPayload>
+        }
+        aggregate: {
+          args: Prisma.SesionRefreshAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSesionRefresh>
+        }
+        groupBy: {
+          args: Prisma.SesionRefreshGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SesionRefreshGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SesionRefreshCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SesionRefreshCountAggregateOutputType> | number
         }
       }
     }
@@ -768,6 +843,21 @@ export const UsuarioScalarFieldEnum = {
 } as const
 
 export type UsuarioScalarFieldEnum = (typeof UsuarioScalarFieldEnum)[keyof typeof UsuarioScalarFieldEnum]
+
+
+export const SesionRefreshScalarFieldEnum = {
+  id: 'id',
+  usuarioId: 'usuarioId',
+  tokenHash: 'tokenHash',
+  fechaExpiracion: 'fechaExpiracion',
+  fechaRevocacion: 'fechaRevocacion',
+  userAgent: 'userAgent',
+  direccionIp: 'direccionIp',
+  fechaCreacion: 'fechaCreacion',
+  fechaModificacion: 'fechaModificacion'
+} as const
+
+export type SesionRefreshScalarFieldEnum = (typeof SesionRefreshScalarFieldEnum)[keyof typeof SesionRefreshScalarFieldEnum]
 
 
 export const TiendaScalarFieldEnum = {
@@ -1148,6 +1238,7 @@ export interface PrismaClientOptionsWithAdapter extends PrismaClientBaseOptions 
 export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaClientOptionsWithAdapter
 export type GlobalOmitConfig = {
   usuario?: Prisma.UsuarioOmit
+  sesionRefresh?: Prisma.SesionRefreshOmit
   tienda?: Prisma.TiendaOmit
   producto?: Prisma.ProductoOmit
   productoImagen?: Prisma.ProductoImagenOmit

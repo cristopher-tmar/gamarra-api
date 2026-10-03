@@ -14,7 +14,7 @@ import type { JwtPayload } from '../auth/guards/jwt-auth.guard';
 import { ImageStorage } from './interfaces/image-storage.interface';
 import { ReordenarImagenesDto } from './dto/reordenar-imagenes.dto';
 import { createHash } from 'node:crypto';
-
+import { ConfigService } from '@nestjs/config';
 export interface ImagenParaProcesar {
     buffer: Buffer;
     originalname: string;
@@ -41,6 +41,7 @@ export class ProductoImagenesService {
         private readonly prisma: PrismaService,
         private readonly visionService: VisionService,
         private readonly imageStorage: ImageStorage,
+        private readonly configService: ConfigService,
     ) { }
 
     private readonly logger = new Logger(
@@ -751,7 +752,10 @@ export class ProductoImagenesService {
          * 0.80 equivale a 80 % de similitud matemática.
          * No representa una probabilidad ni exactitud del modelo.
          */
-        const similitudMinima = 0.80;
+        const similitudMinima =
+            this.configService.getOrThrow<number>(
+                'VISUAL_SEARCH_MIN_SIMILARITY',
+            );
 
         const vectorTexto =
             `[${resultadoVision.embedding.join(',')}]`;

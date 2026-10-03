@@ -45,6 +45,11 @@ export { Prisma }
  */
 export type Usuario = Prisma.UsuarioModel
 /**
+ * Model SesionRefresh
+ * 
+ */
+export type SesionRefresh = Prisma.SesionRefreshModel
+/**
  * Model Tienda
  * 
  */

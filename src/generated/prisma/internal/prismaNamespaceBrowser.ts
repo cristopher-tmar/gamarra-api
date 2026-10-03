@@ -52,6 +52,7 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   Usuario: 'Usuario',
+  SesionRefresh: 'SesionRefresh',
   Tienda: 'Tienda',
   Producto: 'Producto',
   ProductoImagen: 'ProductoImagen'
@@ -86,6 +87,21 @@ export const UsuarioScalarFieldEnum = {
 } as const
 
 export type UsuarioScalarFieldEnum = (typeof UsuarioScalarFieldEnum)[keyof typeof UsuarioScalarFieldEnum]
+
+
+export const SesionRefreshScalarFieldEnum = {
+  id: 'id',
+  usuarioId: 'usuarioId',
+  tokenHash: 'tokenHash',
+  fechaExpiracion: 'fechaExpiracion',
+  fechaRevocacion: 'fechaRevocacion',
+  userAgent: 'userAgent',
+  direccionIp: 'direccionIp',
+  fechaCreacion: 'fechaCreacion',
+  fechaModificacion: 'fechaModificacion'
+} as const
+
+export type SesionRefreshScalarFieldEnum = (typeof SesionRefreshScalarFieldEnum)[keyof typeof SesionRefreshScalarFieldEnum]
 
 
 export const TiendaScalarFieldEnum = {

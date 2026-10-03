@@ -1,15 +1,20 @@
 import { Module } from '@nestjs/common';
-import { VisionModule } from '../vision/vision.module';
-import { ProductoImagenesService } from './producto-imagenes.service';
-import { ProductoImagenesController } from './producto-imagenes.controller';
 import { AuthModule } from '../auth/auth.module';
+import { VisionModule } from '../vision/vision.module';
 import { SupabaseImageStorage } from './infrastructure/supabase-image-storage';
 import { ImageStorage } from './interfaces/image-storage.interface';
+import { ProductoImagenesController } from './producto-imagenes.controller';
 import { ProductoImagenesUploadController } from './producto-imagenes-upload.controller';
+import { ProductoImagenesService } from './producto-imagenes.service';
+
 @Module({
   imports: [
     AuthModule,
     VisionModule,
+  ],
+  controllers: [
+    ProductoImagenesController,
+    ProductoImagenesUploadController,
   ],
   providers: [
     ProductoImagenesService,
@@ -18,10 +23,9 @@ import { ProductoImagenesUploadController } from './producto-imagenes-upload.con
       useClass: SupabaseImageStorage,
     },
   ],
-  exports: [ProductoImagenesService],
-  controllers: [
-    ProductoImagenesController,
-    ProductoImagenesUploadController
+  exports: [
+    ProductoImagenesService,
+    ImageStorage,
   ],
 })
-export class ProductoImagenesModule { }
+export class ProductoImagenesModule {}

@@ -1,29 +1,69 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { Prisma } from '../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
+import { ImageStorage } from '../producto-imagenes/interfaces/image-storage.interface';
+
+import type { JwtPayload } from '../auth/guards/jwt-auth.guard';
+import { RolUsuario } from '../generated/prisma/enums';
 
 @Injectable()
 export class ProductosService {
-  constructor(private readonly prisma: PrismaService) {}
 
-  async create(createProductoDto: CreateProductoDto) {
-    const tienda = await this.prisma.tienda.findUnique({
-      where: {
-        id: createProductoDto.tiendaId,
-      },
-    });
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly imageStorage: ImageStorage,
+  ) { }
+
+  private readonly logger = new Logger(
+    ProductosService.name,
+  );
+
+  private validarPermisoSobreTienda(
+    usuario: JwtPayload,
+    propietarioId: number,
+    mensaje: string,
+  ): void {
+    const esAdministrador =
+      usuario.rol === RolUsuario.ADMINISTRADOR;
+
+    const esPropietario =
+      propietarioId === usuario.sub;
+
+    if (!esAdministrador && !esPropietario) {
+      throw new ForbiddenException(mensaje);
+    }
+  }
+
+  async create(
+    createProductoDto: CreateProductoDto,
+    usuario: JwtPayload,
+  ) {
+    const tienda =
+      await this.prisma.tienda.findUnique({
+        where: {
+          id: createProductoDto.tiendaId,
+        },
+      });
 
     if (!tienda) {
       throw new NotFoundException(
         `No existe una tienda con el ID ${createProductoDto.tiendaId}`,
       );
     }
+
+    this.validarPermisoSobreTienda(
+      usuario,
+      tienda.usuarioId,
+      'No tiene permisos para registrar productos en esta tienda',
+    );
 
     const productoExistente =
       await this.prisma.producto.findUnique({
@@ -48,7 +88,10 @@ export class ProductosService {
         precio: createProductoDto.precio,
         stock: createProductoDto.stock,
         atributos: createProductoDto.atributos
-          ? (createProductoDto.atributos as Prisma.InputJsonValue)
+          ? (
+            createProductoDto.atributos as
+            Prisma.InputJsonValue
+          )
           : undefined,
         estado: createProductoDto.estado,
       },
@@ -124,24 +167,66 @@ export class ProductosService {
   async update(
     id: number,
     updateProductoDto: UpdateProductoDto,
+    usuario: JwtPayload,
   ) {
-    await this.findOne(id);
-
-    if (updateProductoDto.tiendaId) {
-      const tienda = await this.prisma.tienda.findUnique({
+    const productoActual =
+      await this.prisma.producto.findUnique({
         where: {
-          id: updateProductoDto.tiendaId,
+          id,
+        },
+        include: {
+          tienda: true,
         },
       });
 
-      if (!tienda) {
+    if (!productoActual) {
+      throw new NotFoundException(
+        `No existe un producto con el ID ${id}`,
+      );
+    }
+
+    // El comerciante solo puede modificar productos
+    // registrados en una de sus propias tiendas.
+    this.validarPermisoSobreTienda(
+      usuario,
+      productoActual.tienda.usuarioId,
+      'No tiene permisos para modificar este producto',
+    );
+
+    // Si intenta cambiar el producto de tienda,
+    // validamos que la nueva tienda exista y le pertenezca.
+    if (
+      updateProductoDto.tiendaId !== undefined &&
+      updateProductoDto.tiendaId !==
+      productoActual.tiendaId
+    ) {
+      const nuevaTienda =
+        await this.prisma.tienda.findUnique({
+          where: {
+            id: updateProductoDto.tiendaId,
+          },
+        });
+
+      if (!nuevaTienda) {
         throw new NotFoundException(
           `No existe una tienda con el ID ${updateProductoDto.tiendaId}`,
         );
       }
+
+      this.validarPermisoSobreTienda(
+        usuario,
+        nuevaTienda.usuarioId,
+        'No tiene permisos para trasladar el producto a esta tienda',
+      );
     }
 
-    if (updateProductoDto.codigo) {
+    // Si cambia el código, verificamos que no esté
+    // siendo utilizado por otro producto.
+    if (
+      updateProductoDto.codigo !== undefined &&
+      updateProductoDto.codigo !==
+      productoActual.codigo
+    ) {
       const productoConCodigo =
         await this.prisma.producto.findUnique({
           where: {
@@ -159,8 +244,10 @@ export class ProductosService {
       }
     }
 
-    const { atributos, ...datosProducto } =
-      updateProductoDto;
+    const {
+      atributos,
+      ...datosProducto
+    } = updateProductoDto;
 
     return this.prisma.producto.update({
       where: {
@@ -168,13 +255,27 @@ export class ProductosService {
       },
       data: {
         ...datosProducto,
-        atributos: atributos
-          ? (atributos as Prisma.InputJsonValue)
-          : undefined,
+
+        /*
+         * Solo se modifica atributos cuando el DTO
+         * realmente contiene esa propiedad.
+         *
+         * Si no fue enviada, Prisma conserva el valor actual.
+         */
+        atributos:
+          atributos !== undefined
+            ? (
+              atributos as
+              Prisma.InputJsonValue
+            )
+            : undefined,
       },
       include: {
         tienda: true,
         imagenes: {
+          where: {
+            estado: true,
+          },
           orderBy: [
             {
               principal: 'desc',
@@ -188,17 +289,99 @@ export class ProductosService {
     });
   }
 
-  async remove(id: number) {
-    await this.findOne(id);
+  async remove(
+    id: number,
+    usuario: JwtPayload,
+  ) {
+    const producto =
+      await this.prisma.producto.findUnique({
+        where: {
+          id,
+        },
+        include: {
+          tienda: true,
+          imagenes: {
+            select: {
+              id: true,
+              nombreAlmacenado: true,
+            },
+          },
+        },
+      });
 
+    if (!producto) {
+      throw new NotFoundException(
+        `No existe un producto con el ID ${id}`,
+      );
+    }
+
+    this.validarPermisoSobreTienda(
+      usuario,
+      producto.tienda.usuarioId,
+      'No tiene permisos para eliminar este producto',
+    );
+
+    const archivosSupabase = producto.imagenes
+      .map((imagen) => imagen.nombreAlmacenado)
+      .filter(
+        (
+          nombreAlmacenado,
+        ): nombreAlmacenado is string =>
+          nombreAlmacenado !== null,
+      );
+
+    /*
+     * Al eliminar el producto, PostgreSQL elimina también
+     * ProductoImagen y sus embeddings mediante cascade.
+     */
     await this.prisma.producto.delete({
       where: {
         id,
       },
     });
 
+    const archivosNoEliminados: string[] = [];
+
+    /*
+     * Después se eliminan de Supabase los archivos físicos.
+     * Un error de almacenamiento no impide que continúe
+     * la eliminación de los demás archivos.
+     */
+    for (const nombreAlmacenado of archivosSupabase) {
+      try {
+        await this.imageStorage.eliminar(
+          nombreAlmacenado,
+        );
+      } catch (error: unknown) {
+        archivosNoEliminados.push(
+          nombreAlmacenado,
+        );
+
+        this.logger.error(
+          `No se pudo eliminar de Supabase el archivo ${nombreAlmacenado}`,
+          error instanceof Error
+            ? error.stack
+            : String(error),
+        );
+      }
+    }
+
+    const imagenesEliminadas =
+      archivosSupabase.length -
+      archivosNoEliminados.length;
+
+    const almacenamientoLimpio =
+      archivosNoEliminados.length === 0;
+
     return {
-      mensaje: 'Producto eliminado correctamente',
+      mensaje: almacenamientoLimpio
+        ? 'Producto eliminado correctamente'
+        : 'Producto eliminado, pero algunos archivos no pudieron eliminarse del almacenamiento',
+      productoId: id,
+      imagenesEliminadas,
+      archivosNoEliminados,
+      almacenamientoLimpio,
     };
   }
+
 }

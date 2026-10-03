@@ -756,10 +756,6 @@ export type EnumEstadoProcesamientoImagenFieldUpdateOperationsInput = {
   set?: $Enums.EstadoProcesamientoImagen
 }
 
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
-}
-
 export type ProductoImagenCreateWithoutProductoInput = {
   url: string
   nombreAlmacenado?: string | null
