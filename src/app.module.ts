@@ -10,6 +10,7 @@ import { envValidationSchema } from './shared/config/env.validation';
 import { AuthModule } from './auth/auth.module';
 import { VisionModule } from './vision/vision.module';
 import { ProductoImagenesModule } from './producto-imagenes/producto-imagenes.module';
+import { CatalogoModule } from './catalogo/catalogo.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ProductoImagenesModule } from './producto-imagenes/producto-imagenes.mo
     AuthModule,
     VisionModule,
     ProductoImagenesModule,
+    CatalogoModule,
   ],
   controllers: [AppController],
   providers: [AppService],

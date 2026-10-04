@@ -47,32 +47,6 @@ export class ProductoImagenesUploadController {
       ProductoImagenesService,
   ) { }
 
-  @Post('busqueda-visual')
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      required: ['archivo'],
-      properties: {
-        archivo: {
-          type: 'string',
-          format: 'binary',
-          description:
-            'Imagen que se utilizará para buscar productos similares',
-        },
-      },
-    },
-  })
-  @UseInterceptors(
-    FileInterceptor('archivo', {
-      limits: {
-        fileSize: 10 * 1024 * 1024,
-      },
-    }),
-  )
-
   
   buscarProductosPorImagen(
     @UploadedFile()

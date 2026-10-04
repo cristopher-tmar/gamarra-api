@@ -17,9 +17,13 @@ import { RolUsuario } from '../generated/prisma/enums';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiTags,
+} from '@nestjs/swagger';
 import type { AuthenticatedRequest } from '../auth/guards/jwt-auth.guard';
 
+@ApiTags('tiendas')
 @Controller('tiendas')
 export class TiendasController {
   constructor(
