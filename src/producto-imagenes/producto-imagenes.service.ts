@@ -804,6 +804,7 @@ export class ProductoImagenesService {
 
                 return {
                     ...producto,
+                    precio: Number(producto.precio),
                     distancia,
                     similitud,
                     similitudPorcentaje:
