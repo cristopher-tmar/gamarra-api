@@ -4,14 +4,20 @@ import {
   Post,
   Req,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiConsumes,
   ApiTags,
 } from '@nestjs/swagger';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { RolUsuario } from '../generated/prisma/enums';
 import type { RequestWithCorrelationId } from '../shared/http/middleware/correlation-id.middleware';
 import { VisionService } from './vision.service';
 
@@ -22,6 +28,9 @@ interface UploadedImage {
 }
 
 @ApiTags('vision')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(RolUsuario.ADMINISTRADOR)
 @Controller('vision')
 export class VisionController {
   constructor(
@@ -52,8 +61,10 @@ export class VisionController {
     }),
   )
   generarEmbedding(
-    @UploadedFile() archivo: UploadedImage,
-    @Req() request: RequestWithCorrelationId,
+    @UploadedFile()
+    archivo: UploadedImage,
+    @Req()
+    request: RequestWithCorrelationId,
   ) {
     if (!archivo) {
       throw new BadRequestException(

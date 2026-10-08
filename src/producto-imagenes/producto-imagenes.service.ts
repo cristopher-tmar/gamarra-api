@@ -15,6 +15,7 @@ import { ImageStorage } from './interfaces/image-storage.interface';
 import { ReordenarImagenesDto } from './dto/reordenar-imagenes.dto';
 import { createHash } from 'node:crypto';
 import { ConfigService } from '@nestjs/config';
+import { productoImagenSelect } from './selects/producto-imagen.select';
 export interface ImagenParaProcesar {
     buffer: Buffer;
     originalname: string;
@@ -330,23 +331,7 @@ export class ProductoImagenesService {
                     productoId,
                     estado: true,
                 },
-                select: {
-                    id: true,
-                    url: true,
-                    nombreOriginal: true,
-                    mimeType: true,
-                    tamanioBytes: true,
-                    ancho: true,
-                    alto: true,
-                    principal: true,
-                    orden: true,
-                    estado: true,
-                    estadoProcesamiento: true,
-                    modeloEmbedding: true,
-                    fechaProcesamiento: true,
-                    fechaCreacion: true,
-                    fechaModificacion: true,
-                },
+                select: productoImagenSelect,
                 orderBy: [
                     {
                         principal: 'desc',
@@ -716,6 +701,7 @@ export class ProductoImagenesService {
                 where: {
                     productoId,
                 },
+                select: productoImagenSelect,
                 orderBy: {
                     orden: 'asc',
                 },

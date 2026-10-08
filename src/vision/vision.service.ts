@@ -14,11 +14,36 @@ interface VisionErrorResponse {
   codigo?: string;
 }
 
+export interface VisionHealthResult {
+  disponible: boolean;
+  tiempoRespuestaMs: number;
+}
+
 @Injectable()
 export class VisionService {
   constructor(
     private readonly httpService: HttpService,
   ) {}
+
+  async verificarSalud(): Promise<VisionHealthResult> {
+    const inicio = Date.now();
+
+    try {
+      await firstValueFrom(
+        this.httpService.get('/health'),
+      );
+
+      return {
+        disponible: true,
+        tiempoRespuestaMs: Date.now() - inicio,
+      };
+    } catch {
+      return {
+        disponible: false,
+        tiempoRespuestaMs: Date.now() - inicio,
+      };
+    }
+  }
 
   async generarEmbedding(
     archivo: {
@@ -59,7 +84,9 @@ export class VisionService {
     }
   }
 
-  private manejarErrorVision(error: unknown): never {
+  private manejarErrorVision(
+    error: unknown,
+  ): never {
     if (!(error instanceof AxiosError)) {
       throw new BadGatewayException(
         'No se pudo procesar la imagen en el servicio de visión',
@@ -90,4 +117,3 @@ export class VisionService {
     );
   }
 }
-``

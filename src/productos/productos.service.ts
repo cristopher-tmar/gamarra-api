@@ -14,6 +14,9 @@ import { ImageStorage } from '../producto-imagenes/interfaces/image-storage.inte
 import type { JwtPayload } from '../auth/guards/jwt-auth.guard';
 import { RolUsuario } from '../generated/prisma/enums';
 
+import { productoImagenSelect } from '../producto-imagenes/selects/producto-imagen.select';
+import { tiendaProductoSelect } from '../tiendas/selects/tienda-producto.select';
+
 @Injectable()
 export class ProductosService {
 
@@ -96,8 +99,11 @@ export class ProductosService {
         estado: createProductoDto.estado,
       },
       include: {
-        tienda: true,
+        tienda: {
+          select: tiendaProductoSelect,
+        },
         imagenes: {
+          select: productoImagenSelect,
           orderBy: [
             {
               principal: 'desc',
@@ -111,14 +117,27 @@ export class ProductosService {
     });
   }
 
-  findAll() {
+  findAll(usuario: JwtPayload) {
+    const esAdministrador =
+      usuario.rol === RolUsuario.ADMINISTRADOR;
+
     return this.prisma.producto.findMany({
+      where: esAdministrador
+        ? undefined
+        : {
+          tienda: {
+            usuarioId: usuario.sub,
+          },
+        },
       include: {
-        tienda: true,
+        tienda: {
+          select: tiendaProductoSelect,
+        },
         imagenes: {
           where: {
             estado: true,
           },
+          select: productoImagenSelect,
           orderBy: [
             {
               principal: 'desc',
@@ -135,25 +154,33 @@ export class ProductosService {
     });
   }
 
-  async findOne(id: number) {
-    const producto = await this.prisma.producto.findUnique({
-      where: {
-        id,
-      },
-      include: {
-        tienda: true,
-        imagenes: {
-          orderBy: [
-            {
-              principal: 'desc',
-            },
-            {
-              orden: 'asc',
-            },
-          ],
+  async findOne(
+    id: number,
+    usuario: JwtPayload,
+  ) {
+    const producto =
+      await this.prisma.producto.findUnique({
+        where: {
+          id,
         },
-      },
-    });
+        include: {
+          tienda: true,
+          imagenes: {
+            where: {
+              estado: true,
+            },
+            select: productoImagenSelect,
+            orderBy: [
+              {
+                principal: 'desc',
+              },
+              {
+                orden: 'asc',
+              },
+            ],
+          },
+        },
+      });
 
     if (!producto) {
       throw new NotFoundException(
@@ -161,7 +188,22 @@ export class ProductosService {
       );
     }
 
-    return producto;
+    this.validarPermisoSobreTienda(
+      usuario,
+      producto.tienda.usuarioId,
+      'No tiene permisos para consultar este producto',
+    );
+
+    const {
+      usuarioId,
+      ...tiendaSinUsuarioId
+    } = producto.tienda;
+
+    return {
+      ...producto,
+      tienda: tiendaSinUsuarioId,
+    };
+
   }
 
   async update(
@@ -271,11 +313,14 @@ export class ProductosService {
             : undefined,
       },
       include: {
-        tienda: true,
+        tienda: {
+          select: tiendaProductoSelect,
+        },
         imagenes: {
           where: {
             estado: true,
           },
+          select: productoImagenSelect,
           orderBy: [
             {
               principal: 'desc',

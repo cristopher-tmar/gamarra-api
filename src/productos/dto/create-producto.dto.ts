@@ -1,3 +1,4 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsBoolean,
   IsInt,
@@ -11,6 +12,13 @@ import {
 } from 'class-validator';
 
 export class CreateProductoDto {
+  @ApiProperty({
+    description:
+      'Identificador de la tienda donde se registrará el producto',
+    type: Number,
+    example: 1,
+    minimum: 1,
+  })
   @IsInt({
     message:
       'El identificador de la tienda debe ser un número entero',
@@ -21,6 +29,13 @@ export class CreateProductoDto {
   })
   tiendaId: number;
 
+  @ApiProperty({
+    description:
+      'Código único del producto',
+    type: String,
+    example: 'POL-001',
+    maxLength: 20,
+  })
   @IsString({
     message:
       'El código del producto debe ser una cadena de texto',
@@ -35,6 +50,13 @@ export class CreateProductoDto {
   })
   codigo: string;
 
+  @ApiProperty({
+    description:
+      'Nombre comercial del producto',
+    type: String,
+    example: 'Polo oversize marrón',
+    maxLength: 150,
+  })
   @IsString({
     message:
       'El nombre del producto debe ser una cadena de texto',
@@ -49,6 +71,13 @@ export class CreateProductoDto {
   })
   nombre: string;
 
+  @ApiProperty({
+    description:
+      'Categoría a la que pertenece el producto',
+    type: String,
+    example: 'Polos',
+    maxLength: 80,
+  })
   @IsString({
     message:
       'La categoría debe ser una cadena de texto',
@@ -63,6 +92,14 @@ export class CreateProductoDto {
   })
   categoria: string;
 
+  @ApiPropertyOptional({
+    description:
+      'Descripción general del producto',
+    type: String,
+    example:
+      'Polo de algodón de corte oversize y manga corta',
+    maxLength: 500,
+  })
   @IsOptional()
   @IsString({
     message:
@@ -74,6 +111,13 @@ export class CreateProductoDto {
   })
   descripcion?: string;
 
+  @ApiProperty({
+    description:
+      'Precio unitario del producto, con un máximo de dos decimales',
+    type: Number,
+    example: 59.9,
+    minimum: 0,
+  })
   @IsNumber(
     {
       maxDecimalPlaces: 2,
@@ -89,6 +133,13 @@ export class CreateProductoDto {
   })
   precio: number;
 
+  @ApiProperty({
+    description:
+      'Cantidad disponible del producto',
+    type: Number,
+    example: 20,
+    minimum: 0,
+  })
   @IsInt({
     message:
       'El stock debe ser un número entero',
@@ -99,6 +150,21 @@ export class CreateProductoDto {
   })
   stock: number;
 
+  @ApiPropertyOptional({
+    description:
+      'Características adicionales del producto en formato JSON',
+    type: 'object',
+    example: {
+      marca: 'Topitop',
+      estilo: 'Oversize',
+      material: 'Algodón',
+      tallas: ['S', 'M', 'L'],
+      colores: ['Marrón'],
+      tipoManga: 'Corta',
+      tipoCuello: 'Redondo',
+    },
+    additionalProperties: true,
+  })
   @IsOptional()
   @IsObject({
     message:
@@ -106,6 +172,13 @@ export class CreateProductoDto {
   })
   atributos?: Record<string, unknown>;
 
+  @ApiPropertyOptional({
+    description:
+      'Indica si el producto se encuentra activo',
+    type: Boolean,
+    example: true,
+    default: true,
+  })
   @IsOptional()
   @IsBoolean({
     message:

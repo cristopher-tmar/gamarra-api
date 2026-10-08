@@ -1,0 +1,18 @@
+export const productoImagenSelect = {
+  id: true,
+  productoId: true,
+  url: true,
+  nombreOriginal: true,
+  mimeType: true,
+  tamanioBytes: true,
+  ancho: true,
+  alto: true,
+  principal: true,
+  orden: true,
+  estado: true,
+  estadoProcesamiento: true,
+  fechaProcesamiento: true,
+  mensajeError: true,
+  fechaCreacion: true,
+  fechaModificacion: true,
+} as const;

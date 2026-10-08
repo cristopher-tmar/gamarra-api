@@ -15,9 +15,15 @@ import { Throttle } from '@nestjs/throttler';
 import { BusquedaVisualThrottlerGuard } from './guards/busqueda-visual-throttler.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
+    ApiBadGatewayResponse,
+    ApiBadRequestResponse,
     ApiBody,
     ApiConsumes,
-    ApiQuery,
+    ApiNotFoundResponse,
+    ApiOkResponse,
+    ApiOperation,
+    ApiParam,
+    ApiResponse,
     ApiTags,
 } from '@nestjs/swagger';
 import type { RequestWithCorrelationId } from '../shared/http/middleware/correlation-id.middleware';
@@ -39,35 +45,18 @@ export class CatalogoController {
     ) { }
 
     @Get()
-    @ApiQuery({
-        name: 'pagina',
-        required: false,
-        type: Number,
-        example: 1,
+    @ApiOperation({
+        summary: 'Consultar el catálogo público',
+        description:
+            'Devuelve los productos disponibles mediante una respuesta paginada. Permite filtrar por texto, categoría y tienda.',
     })
-    @ApiQuery({
-        name: 'limite',
-        required: false,
-        type: Number,
-        example: 12,
+    @ApiOkResponse({
+        description:
+            'Catálogo consultado correctamente',
     })
-    @ApiQuery({
-        name: 'buscar',
-        required: false,
-        type: String,
-        example: 'oversize',
-    })
-    @ApiQuery({
-        name: 'categoria',
-        required: false,
-        type: String,
-        example: 'Polos',
-    })
-    @ApiQuery({
-        name: 'tiendaId',
-        required: false,
-        type: Number,
-        example: 1,
+    @ApiBadRequestResponse({
+        description:
+            'Uno o más filtros de búsqueda no son válidos',
     })
     listar(
         @Query()
@@ -85,6 +74,11 @@ export class CatalogoController {
      * como el identificador de un producto.
      */
     @Post('busqueda-visual')
+    @ApiOperation({
+        summary: 'Buscar productos mediante una imagen',
+        description:
+            'Recibe una imagen y devuelve productos visualmente similares. La operación está limitada a 10 solicitudes por minuto.',
+    })
     @UseGuards(BusquedaVisualThrottlerGuard)
     @Throttle({
         busquedaVisual: {
@@ -106,6 +100,23 @@ export class CatalogoController {
                 },
             },
         },
+    })
+    @ApiOkResponse({
+        description:
+            'Búsqueda visual realizada correctamente',
+    })
+    @ApiBadRequestResponse({
+        description:
+            'No se proporcionó una imagen o el archivo no es válido',
+    })
+    @ApiResponse({
+        status: 429,
+        description:
+            'Se superó el límite permitido de búsquedas visuales',
+    })
+    @ApiBadGatewayResponse({
+        description:
+            'El servicio de visión no se encuentra disponible o no pudo procesar la imagen',
     })
     @UseInterceptors(
         FileInterceptor('archivo', {
@@ -133,6 +144,29 @@ export class CatalogoController {
     }
 
     @Get(':productoId')
+    @ApiOperation({
+        summary: 'Obtener el detalle público de un producto',
+        description:
+            'Devuelve la información pública de un producto disponible, incluyendo su tienda y sus imágenes procesadas.',
+    })
+    @ApiParam({
+        name: 'productoId',
+        description: 'Identificador del producto',
+        type: Number,
+        example: 1,
+    })
+    @ApiOkResponse({
+        description:
+            'Detalle del producto obtenido correctamente',
+    })
+    @ApiBadRequestResponse({
+        description:
+            'El identificador del producto no es válido',
+    })
+    @ApiNotFoundResponse({
+        description:
+            'El producto no existe, está inactivo o pertenece a una tienda inactiva',
+    })
     obtenerDetalle(
         @Param(
             'productoId',
