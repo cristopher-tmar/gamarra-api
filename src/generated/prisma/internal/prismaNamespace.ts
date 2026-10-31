@@ -402,7 +402,8 @@ export const ModelName = {
   Tienda: 'Tienda',
   Producto: 'Producto',
   ProductoImagen: 'ProductoImagen',
-  Favorito: 'Favorito'
+  Favorito: 'Favorito',
+  EventoComportamiento: 'EventoComportamiento'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -418,7 +419,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "usuario" | "sesionRefresh" | "tienda" | "producto" | "productoImagen" | "favorito"
+    modelProps: "usuario" | "sesionRefresh" | "tienda" | "producto" | "productoImagen" | "favorito" | "eventoComportamiento"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -866,6 +867,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    EventoComportamiento: {
+      payload: Prisma.$EventoComportamientoPayload<ExtArgs>
+      fields: Prisma.EventoComportamientoFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EventoComportamientoFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventoComportamientoPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EventoComportamientoFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventoComportamientoPayload>
+        }
+        findFirst: {
+          args: Prisma.EventoComportamientoFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventoComportamientoPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EventoComportamientoFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventoComportamientoPayload>
+        }
+        findMany: {
+          args: Prisma.EventoComportamientoFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventoComportamientoPayload>[]
+        }
+        create: {
+          args: Prisma.EventoComportamientoCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventoComportamientoPayload>
+        }
+        createMany: {
+          args: Prisma.EventoComportamientoCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EventoComportamientoCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventoComportamientoPayload>[]
+        }
+        delete: {
+          args: Prisma.EventoComportamientoDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventoComportamientoPayload>
+        }
+        update: {
+          args: Prisma.EventoComportamientoUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventoComportamientoPayload>
+        }
+        deleteMany: {
+          args: Prisma.EventoComportamientoDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EventoComportamientoUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EventoComportamientoUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventoComportamientoPayload>[]
+        }
+        upsert: {
+          args: Prisma.EventoComportamientoUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventoComportamientoPayload>
+        }
+        aggregate: {
+          args: Prisma.EventoComportamientoAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEventoComportamiento>
+        }
+        groupBy: {
+          args: Prisma.EventoComportamientoGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EventoComportamientoGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EventoComportamientoCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EventoComportamientoCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1004,6 +1079,20 @@ export const FavoritoScalarFieldEnum = {
 } as const
 
 export type FavoritoScalarFieldEnum = (typeof FavoritoScalarFieldEnum)[keyof typeof FavoritoScalarFieldEnum]
+
+
+export const EventoComportamientoScalarFieldEnum = {
+  id: 'id',
+  tipo: 'tipo',
+  usuarioId: 'usuarioId',
+  productoId: 'productoId',
+  sessionId: 'sessionId',
+  terminoBusqueda: 'terminoBusqueda',
+  metadata: 'metadata',
+  fechaEvento: 'fechaEvento'
+} as const
+
+export type EventoComportamientoScalarFieldEnum = (typeof EventoComportamientoScalarFieldEnum)[keyof typeof EventoComportamientoScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1155,6 +1244,20 @@ export type EnumEstadoProcesamientoImagenFieldRefInput<$PrismaModel> = FieldRefI
  * Reference to a field of type 'EstadoProcesamientoImagen[]'
  */
 export type ListEnumEstadoProcesamientoImagenFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EstadoProcesamientoImagen[]'>
+    
+
+
+/**
+ * Reference to a field of type 'TipoEventoComportamiento'
+ */
+export type EnumTipoEventoComportamientoFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TipoEventoComportamiento'>
+    
+
+
+/**
+ * Reference to a field of type 'TipoEventoComportamiento[]'
+ */
+export type ListEnumTipoEventoComportamientoFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TipoEventoComportamiento[]'>
     
 
 
@@ -1328,6 +1431,7 @@ export type GlobalOmitConfig = {
   producto?: Prisma.ProductoOmit
   productoImagen?: Prisma.ProductoImagenOmit
   favorito?: Prisma.FavoritoOmit
+  eventoComportamiento?: Prisma.EventoComportamientoOmit
 }
 
 /* Types for Logging */

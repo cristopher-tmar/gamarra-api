@@ -341,6 +341,23 @@ export type EnumEstadoProcesamientoImagenWithAggregatesFilter<$PrismaModel = nev
   _max?: Prisma.NestedEnumEstadoProcesamientoImagenFilter<$PrismaModel>
 }
 
+export type EnumTipoEventoComportamientoFilter<$PrismaModel = never> = {
+  equals?: $Enums.TipoEventoComportamiento | Prisma.EnumTipoEventoComportamientoFieldRefInput<$PrismaModel>
+  in?: $Enums.TipoEventoComportamiento[] | Prisma.ListEnumTipoEventoComportamientoFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TipoEventoComportamiento[] | Prisma.ListEnumTipoEventoComportamientoFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTipoEventoComportamientoFilter<$PrismaModel> | $Enums.TipoEventoComportamiento
+}
+
+export type EnumTipoEventoComportamientoWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TipoEventoComportamiento | Prisma.EnumTipoEventoComportamientoFieldRefInput<$PrismaModel>
+  in?: $Enums.TipoEventoComportamiento[] | Prisma.ListEnumTipoEventoComportamientoFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TipoEventoComportamiento[] | Prisma.ListEnumTipoEventoComportamientoFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTipoEventoComportamientoWithAggregatesFilter<$PrismaModel> | $Enums.TipoEventoComportamiento
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTipoEventoComportamientoFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTipoEventoComportamientoFilter<$PrismaModel>
+}
+
 export type NestedIntFilter<$PrismaModel = never> = {
   equals?: number | Prisma.IntFieldRefInput<$PrismaModel>
   in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
@@ -650,6 +667,23 @@ export type NestedEnumEstadoProcesamientoImagenWithAggregatesFilter<$PrismaModel
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumEstadoProcesamientoImagenFilter<$PrismaModel>
   _max?: Prisma.NestedEnumEstadoProcesamientoImagenFilter<$PrismaModel>
+}
+
+export type NestedEnumTipoEventoComportamientoFilter<$PrismaModel = never> = {
+  equals?: $Enums.TipoEventoComportamiento | Prisma.EnumTipoEventoComportamientoFieldRefInput<$PrismaModel>
+  in?: $Enums.TipoEventoComportamiento[] | Prisma.ListEnumTipoEventoComportamientoFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TipoEventoComportamiento[] | Prisma.ListEnumTipoEventoComportamientoFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTipoEventoComportamientoFilter<$PrismaModel> | $Enums.TipoEventoComportamiento
+}
+
+export type NestedEnumTipoEventoComportamientoWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TipoEventoComportamiento | Prisma.EnumTipoEventoComportamientoFieldRefInput<$PrismaModel>
+  in?: $Enums.TipoEventoComportamiento[] | Prisma.ListEnumTipoEventoComportamientoFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TipoEventoComportamiento[] | Prisma.ListEnumTipoEventoComportamientoFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTipoEventoComportamientoWithAggregatesFilter<$PrismaModel> | $Enums.TipoEventoComportamiento
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTipoEventoComportamientoFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTipoEventoComportamientoFilter<$PrismaModel>
 }
 
 

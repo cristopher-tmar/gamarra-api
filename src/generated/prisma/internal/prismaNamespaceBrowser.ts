@@ -56,7 +56,8 @@ export const ModelName = {
   Tienda: 'Tienda',
   Producto: 'Producto',
   ProductoImagen: 'ProductoImagen',
-  Favorito: 'Favorito'
+  Favorito: 'Favorito',
+  EventoComportamiento: 'EventoComportamiento'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -174,6 +175,20 @@ export const FavoritoScalarFieldEnum = {
 } as const
 
 export type FavoritoScalarFieldEnum = (typeof FavoritoScalarFieldEnum)[keyof typeof FavoritoScalarFieldEnum]
+
+
+export const EventoComportamientoScalarFieldEnum = {
+  id: 'id',
+  tipo: 'tipo',
+  usuarioId: 'usuarioId',
+  productoId: 'productoId',
+  sessionId: 'sessionId',
+  terminoBusqueda: 'terminoBusqueda',
+  metadata: 'metadata',
+  fechaEvento: 'fechaEvento'
+} as const
+
+export type EventoComportamientoScalarFieldEnum = (typeof EventoComportamientoScalarFieldEnum)[keyof typeof EventoComportamientoScalarFieldEnum]
 
 
 export const SortOrder = {

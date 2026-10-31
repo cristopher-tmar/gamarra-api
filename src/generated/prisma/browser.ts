@@ -47,3 +47,8 @@ export type ProductoImagen = Prisma.ProductoImagenModel
  * 
  */
 export type Favorito = Prisma.FavoritoModel
+/**
+ * Model EventoComportamiento
+ * 
+ */
+export type EventoComportamiento = Prisma.EventoComportamientoModel

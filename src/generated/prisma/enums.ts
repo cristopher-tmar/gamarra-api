@@ -26,3 +26,15 @@ export const RolUsuario = {
 } as const
 
 export type RolUsuario = (typeof RolUsuario)[keyof typeof RolUsuario]
+
+
+export const TipoEventoComportamiento = {
+  PRODUCTO_VISTO: 'PRODUCTO_VISTO',
+  FAVORITO_AGREGADO: 'FAVORITO_AGREGADO',
+  FAVORITO_ELIMINADO: 'FAVORITO_ELIMINADO',
+  BUSQUEDA_TEXTO: 'BUSQUEDA_TEXTO',
+  BUSQUEDA_VISUAL: 'BUSQUEDA_VISUAL',
+  RESULTADO_SELECCIONADO: 'RESULTADO_SELECCIONADO'
+} as const
+
+export type TipoEventoComportamiento = (typeof TipoEventoComportamiento)[keyof typeof TipoEventoComportamiento]

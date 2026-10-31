@@ -19,9 +19,10 @@ model Usuario {
   fechaCreacion     DateTime   @default(now()) @map("fecha_creacion")
   fechaModificacion DateTime   @updatedAt @map("fecha_modificacion")
 
-  tiendas         Tienda[]
-  sesionesRefresh SesionRefresh[]
-  favoritos       Favorito[]
+  tiendas               Tienda[]
+  sesionesRefresh       SesionRefresh[]
+  favoritos             Favorito[]
+  eventosComportamiento EventoComportamiento[]
 
   @@map("usuario")
 }
@@ -81,9 +82,10 @@ model Producto {
   fechaCreacion     DateTime @default(now()) @map("fecha_creacion")
   fechaModificacion DateTime @updatedAt @map("fecha_modificacion")
 
-  tienda    Tienda           @relation(fields: [tiendaId], references: [id])
-  imagenes  ProductoImagen[]
-  favoritos Favorito[]
+  tienda                Tienda                 @relation(fields: [tiendaId], references: [id])
+  imagenes              ProductoImagen[]
+  favoritos             Favorito[]
+  eventosComportamiento EventoComportamiento[]
 
   @@index([tiendaId])
   @@index([categoria])
@@ -136,6 +138,30 @@ model Favorito {
   @@map("favorito")
 }
 
+model EventoComportamiento {
+  id              Int                      @id @default(autoincrement())
+  tipo            TipoEventoComportamiento
+  usuarioId       Int?                     @map("usuario_id")
+  productoId      Int?                     @map("producto_id")
+  sessionId       String                   @map("session_id") @db.VarChar(100)
+  terminoBusqueda String?                  @map("termino_busqueda") @db.VarChar(200)
+  metadata        Json?
+  fechaEvento     DateTime                 @default(now()) @map("fecha_evento")
+
+  usuario  Usuario?  @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
+  producto Producto? @relation(fields: [productoId], references: [id], onDelete: SetNull)
+
+  @@index([tipo])
+  @@index([usuarioId])
+  @@index([productoId])
+  @@index([sessionId])
+  @@index([fechaEvento])
+  @@index([tipo, fechaEvento])
+  @@index([productoId, fechaEvento])
+  @@index([usuarioId, fechaEvento])
+  @@map("evento_comportamiento")
+}
+
 enum EstadoProcesamientoImagen {
   PENDIENTE
   PROCESANDO
@@ -147,4 +173,13 @@ enum RolUsuario {
   ADMINISTRADOR
   COMERCIANTE
   CLIENTE
+}
+
+enum TipoEventoComportamiento {
+  PRODUCTO_VISTO
+  FAVORITO_AGREGADO
+  FAVORITO_ELIMINADO
+  BUSQUEDA_TEXTO
+  BUSQUEDA_VISUAL
+  RESULTADO_SELECCIONADO
 }

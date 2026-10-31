@@ -283,6 +283,7 @@ export type ProductoWhereInput = {
   tienda?: Prisma.XOR<Prisma.TiendaScalarRelationFilter, Prisma.TiendaWhereInput>
   imagenes?: Prisma.ProductoImagenListRelationFilter
   favoritos?: Prisma.FavoritoListRelationFilter
+  eventosComportamiento?: Prisma.EventoComportamientoListRelationFilter
 }
 
 export type ProductoOrderByWithRelationInput = {
@@ -301,6 +302,7 @@ export type ProductoOrderByWithRelationInput = {
   tienda?: Prisma.TiendaOrderByWithRelationInput
   imagenes?: Prisma.ProductoImagenOrderByRelationAggregateInput
   favoritos?: Prisma.FavoritoOrderByRelationAggregateInput
+  eventosComportamiento?: Prisma.EventoComportamientoOrderByRelationAggregateInput
 }
 
 export type ProductoWhereUniqueInput = Prisma.AtLeast<{
@@ -322,6 +324,7 @@ export type ProductoWhereUniqueInput = Prisma.AtLeast<{
   tienda?: Prisma.XOR<Prisma.TiendaScalarRelationFilter, Prisma.TiendaWhereInput>
   imagenes?: Prisma.ProductoImagenListRelationFilter
   favoritos?: Prisma.FavoritoListRelationFilter
+  eventosComportamiento?: Prisma.EventoComportamientoListRelationFilter
 }, "id" | "codigo">
 
 export type ProductoOrderByWithAggregationInput = {
@@ -376,6 +379,7 @@ export type ProductoCreateInput = {
   tienda: Prisma.TiendaCreateNestedOneWithoutProductosInput
   imagenes?: Prisma.ProductoImagenCreateNestedManyWithoutProductoInput
   favoritos?: Prisma.FavoritoCreateNestedManyWithoutProductoInput
+  eventosComportamiento?: Prisma.EventoComportamientoCreateNestedManyWithoutProductoInput
 }
 
 export type ProductoUncheckedCreateInput = {
@@ -393,6 +397,7 @@ export type ProductoUncheckedCreateInput = {
   fechaModificacion?: Date | string
   imagenes?: Prisma.ProductoImagenUncheckedCreateNestedManyWithoutProductoInput
   favoritos?: Prisma.FavoritoUncheckedCreateNestedManyWithoutProductoInput
+  eventosComportamiento?: Prisma.EventoComportamientoUncheckedCreateNestedManyWithoutProductoInput
 }
 
 export type ProductoUpdateInput = {
@@ -409,6 +414,7 @@ export type ProductoUpdateInput = {
   tienda?: Prisma.TiendaUpdateOneRequiredWithoutProductosNestedInput
   imagenes?: Prisma.ProductoImagenUpdateManyWithoutProductoNestedInput
   favoritos?: Prisma.FavoritoUpdateManyWithoutProductoNestedInput
+  eventosComportamiento?: Prisma.EventoComportamientoUpdateManyWithoutProductoNestedInput
 }
 
 export type ProductoUncheckedUpdateInput = {
@@ -426,6 +432,7 @@ export type ProductoUncheckedUpdateInput = {
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   imagenes?: Prisma.ProductoImagenUncheckedUpdateManyWithoutProductoNestedInput
   favoritos?: Prisma.FavoritoUncheckedUpdateManyWithoutProductoNestedInput
+  eventosComportamiento?: Prisma.EventoComportamientoUncheckedUpdateManyWithoutProductoNestedInput
 }
 
 export type ProductoCreateManyInput = {
@@ -543,6 +550,11 @@ export type ProductoScalarRelationFilter = {
   isNot?: Prisma.ProductoWhereInput
 }
 
+export type ProductoNullableScalarRelationFilter = {
+  is?: Prisma.ProductoWhereInput | null
+  isNot?: Prisma.ProductoWhereInput | null
+}
+
 export type ProductoCreateNestedManyWithoutTiendaInput = {
   create?: Prisma.XOR<Prisma.ProductoCreateWithoutTiendaInput, Prisma.ProductoUncheckedCreateWithoutTiendaInput> | Prisma.ProductoCreateWithoutTiendaInput[] | Prisma.ProductoUncheckedCreateWithoutTiendaInput[]
   connectOrCreate?: Prisma.ProductoCreateOrConnectWithoutTiendaInput | Prisma.ProductoCreateOrConnectWithoutTiendaInput[]
@@ -621,6 +633,22 @@ export type ProductoUpdateOneRequiredWithoutFavoritosNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProductoUpdateToOneWithWhereWithoutFavoritosInput, Prisma.ProductoUpdateWithoutFavoritosInput>, Prisma.ProductoUncheckedUpdateWithoutFavoritosInput>
 }
 
+export type ProductoCreateNestedOneWithoutEventosComportamientoInput = {
+  create?: Prisma.XOR<Prisma.ProductoCreateWithoutEventosComportamientoInput, Prisma.ProductoUncheckedCreateWithoutEventosComportamientoInput>
+  connectOrCreate?: Prisma.ProductoCreateOrConnectWithoutEventosComportamientoInput
+  connect?: Prisma.ProductoWhereUniqueInput
+}
+
+export type ProductoUpdateOneWithoutEventosComportamientoNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductoCreateWithoutEventosComportamientoInput, Prisma.ProductoUncheckedCreateWithoutEventosComportamientoInput>
+  connectOrCreate?: Prisma.ProductoCreateOrConnectWithoutEventosComportamientoInput
+  upsert?: Prisma.ProductoUpsertWithoutEventosComportamientoInput
+  disconnect?: Prisma.ProductoWhereInput | boolean
+  delete?: Prisma.ProductoWhereInput | boolean
+  connect?: Prisma.ProductoWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProductoUpdateToOneWithWhereWithoutEventosComportamientoInput, Prisma.ProductoUpdateWithoutEventosComportamientoInput>, Prisma.ProductoUncheckedUpdateWithoutEventosComportamientoInput>
+}
+
 export type ProductoCreateWithoutTiendaInput = {
   codigo: string
   nombre: string
@@ -634,6 +662,7 @@ export type ProductoCreateWithoutTiendaInput = {
   fechaModificacion?: Date | string
   imagenes?: Prisma.ProductoImagenCreateNestedManyWithoutProductoInput
   favoritos?: Prisma.FavoritoCreateNestedManyWithoutProductoInput
+  eventosComportamiento?: Prisma.EventoComportamientoCreateNestedManyWithoutProductoInput
 }
 
 export type ProductoUncheckedCreateWithoutTiendaInput = {
@@ -650,6 +679,7 @@ export type ProductoUncheckedCreateWithoutTiendaInput = {
   fechaModificacion?: Date | string
   imagenes?: Prisma.ProductoImagenUncheckedCreateNestedManyWithoutProductoInput
   favoritos?: Prisma.FavoritoUncheckedCreateNestedManyWithoutProductoInput
+  eventosComportamiento?: Prisma.EventoComportamientoUncheckedCreateNestedManyWithoutProductoInput
 }
 
 export type ProductoCreateOrConnectWithoutTiendaInput = {
@@ -709,6 +739,7 @@ export type ProductoCreateWithoutImagenesInput = {
   fechaModificacion?: Date | string
   tienda: Prisma.TiendaCreateNestedOneWithoutProductosInput
   favoritos?: Prisma.FavoritoCreateNestedManyWithoutProductoInput
+  eventosComportamiento?: Prisma.EventoComportamientoCreateNestedManyWithoutProductoInput
 }
 
 export type ProductoUncheckedCreateWithoutImagenesInput = {
@@ -725,6 +756,7 @@ export type ProductoUncheckedCreateWithoutImagenesInput = {
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   favoritos?: Prisma.FavoritoUncheckedCreateNestedManyWithoutProductoInput
+  eventosComportamiento?: Prisma.EventoComportamientoUncheckedCreateNestedManyWithoutProductoInput
 }
 
 export type ProductoCreateOrConnectWithoutImagenesInput = {
@@ -756,6 +788,7 @@ export type ProductoUpdateWithoutImagenesInput = {
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tienda?: Prisma.TiendaUpdateOneRequiredWithoutProductosNestedInput
   favoritos?: Prisma.FavoritoUpdateManyWithoutProductoNestedInput
+  eventosComportamiento?: Prisma.EventoComportamientoUpdateManyWithoutProductoNestedInput
 }
 
 export type ProductoUncheckedUpdateWithoutImagenesInput = {
@@ -772,6 +805,7 @@ export type ProductoUncheckedUpdateWithoutImagenesInput = {
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   favoritos?: Prisma.FavoritoUncheckedUpdateManyWithoutProductoNestedInput
+  eventosComportamiento?: Prisma.EventoComportamientoUncheckedUpdateManyWithoutProductoNestedInput
 }
 
 export type ProductoCreateWithoutFavoritosInput = {
@@ -787,6 +821,7 @@ export type ProductoCreateWithoutFavoritosInput = {
   fechaModificacion?: Date | string
   tienda: Prisma.TiendaCreateNestedOneWithoutProductosInput
   imagenes?: Prisma.ProductoImagenCreateNestedManyWithoutProductoInput
+  eventosComportamiento?: Prisma.EventoComportamientoCreateNestedManyWithoutProductoInput
 }
 
 export type ProductoUncheckedCreateWithoutFavoritosInput = {
@@ -803,6 +838,7 @@ export type ProductoUncheckedCreateWithoutFavoritosInput = {
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   imagenes?: Prisma.ProductoImagenUncheckedCreateNestedManyWithoutProductoInput
+  eventosComportamiento?: Prisma.EventoComportamientoUncheckedCreateNestedManyWithoutProductoInput
 }
 
 export type ProductoCreateOrConnectWithoutFavoritosInput = {
@@ -834,6 +870,7 @@ export type ProductoUpdateWithoutFavoritosInput = {
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tienda?: Prisma.TiendaUpdateOneRequiredWithoutProductosNestedInput
   imagenes?: Prisma.ProductoImagenUpdateManyWithoutProductoNestedInput
+  eventosComportamiento?: Prisma.EventoComportamientoUpdateManyWithoutProductoNestedInput
 }
 
 export type ProductoUncheckedUpdateWithoutFavoritosInput = {
@@ -850,6 +887,89 @@ export type ProductoUncheckedUpdateWithoutFavoritosInput = {
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   imagenes?: Prisma.ProductoImagenUncheckedUpdateManyWithoutProductoNestedInput
+  eventosComportamiento?: Prisma.EventoComportamientoUncheckedUpdateManyWithoutProductoNestedInput
+}
+
+export type ProductoCreateWithoutEventosComportamientoInput = {
+  codigo: string
+  nombre: string
+  categoria: string
+  descripcion?: string | null
+  precio: runtime.Decimal | runtime.DecimalJsLike | number | string
+  stock?: number
+  atributos?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  estado?: boolean
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  tienda: Prisma.TiendaCreateNestedOneWithoutProductosInput
+  imagenes?: Prisma.ProductoImagenCreateNestedManyWithoutProductoInput
+  favoritos?: Prisma.FavoritoCreateNestedManyWithoutProductoInput
+}
+
+export type ProductoUncheckedCreateWithoutEventosComportamientoInput = {
+  id?: number
+  tiendaId: number
+  codigo: string
+  nombre: string
+  categoria: string
+  descripcion?: string | null
+  precio: runtime.Decimal | runtime.DecimalJsLike | number | string
+  stock?: number
+  atributos?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  estado?: boolean
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  imagenes?: Prisma.ProductoImagenUncheckedCreateNestedManyWithoutProductoInput
+  favoritos?: Prisma.FavoritoUncheckedCreateNestedManyWithoutProductoInput
+}
+
+export type ProductoCreateOrConnectWithoutEventosComportamientoInput = {
+  where: Prisma.ProductoWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProductoCreateWithoutEventosComportamientoInput, Prisma.ProductoUncheckedCreateWithoutEventosComportamientoInput>
+}
+
+export type ProductoUpsertWithoutEventosComportamientoInput = {
+  update: Prisma.XOR<Prisma.ProductoUpdateWithoutEventosComportamientoInput, Prisma.ProductoUncheckedUpdateWithoutEventosComportamientoInput>
+  create: Prisma.XOR<Prisma.ProductoCreateWithoutEventosComportamientoInput, Prisma.ProductoUncheckedCreateWithoutEventosComportamientoInput>
+  where?: Prisma.ProductoWhereInput
+}
+
+export type ProductoUpdateToOneWithWhereWithoutEventosComportamientoInput = {
+  where?: Prisma.ProductoWhereInput
+  data: Prisma.XOR<Prisma.ProductoUpdateWithoutEventosComportamientoInput, Prisma.ProductoUncheckedUpdateWithoutEventosComportamientoInput>
+}
+
+export type ProductoUpdateWithoutEventosComportamientoInput = {
+  codigo?: Prisma.StringFieldUpdateOperationsInput | string
+  nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  categoria?: Prisma.StringFieldUpdateOperationsInput | string
+  descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  precio?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  stock?: Prisma.IntFieldUpdateOperationsInput | number
+  atributos?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  estado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tienda?: Prisma.TiendaUpdateOneRequiredWithoutProductosNestedInput
+  imagenes?: Prisma.ProductoImagenUpdateManyWithoutProductoNestedInput
+  favoritos?: Prisma.FavoritoUpdateManyWithoutProductoNestedInput
+}
+
+export type ProductoUncheckedUpdateWithoutEventosComportamientoInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  tiendaId?: Prisma.IntFieldUpdateOperationsInput | number
+  codigo?: Prisma.StringFieldUpdateOperationsInput | string
+  nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  categoria?: Prisma.StringFieldUpdateOperationsInput | string
+  descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  precio?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  stock?: Prisma.IntFieldUpdateOperationsInput | number
+  atributos?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  estado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  imagenes?: Prisma.ProductoImagenUncheckedUpdateManyWithoutProductoNestedInput
+  favoritos?: Prisma.FavoritoUncheckedUpdateManyWithoutProductoNestedInput
 }
 
 export type ProductoCreateManyTiendaInput = {
@@ -879,6 +999,7 @@ export type ProductoUpdateWithoutTiendaInput = {
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   imagenes?: Prisma.ProductoImagenUpdateManyWithoutProductoNestedInput
   favoritos?: Prisma.FavoritoUpdateManyWithoutProductoNestedInput
+  eventosComportamiento?: Prisma.EventoComportamientoUpdateManyWithoutProductoNestedInput
 }
 
 export type ProductoUncheckedUpdateWithoutTiendaInput = {
@@ -895,6 +1016,7 @@ export type ProductoUncheckedUpdateWithoutTiendaInput = {
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   imagenes?: Prisma.ProductoImagenUncheckedUpdateManyWithoutProductoNestedInput
   favoritos?: Prisma.FavoritoUncheckedUpdateManyWithoutProductoNestedInput
+  eventosComportamiento?: Prisma.EventoComportamientoUncheckedUpdateManyWithoutProductoNestedInput
 }
 
 export type ProductoUncheckedUpdateManyWithoutTiendaInput = {
@@ -919,11 +1041,13 @@ export type ProductoUncheckedUpdateManyWithoutTiendaInput = {
 export type ProductoCountOutputType = {
   imagenes: number
   favoritos: number
+  eventosComportamiento: number
 }
 
 export type ProductoCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   imagenes?: boolean | ProductoCountOutputTypeCountImagenesArgs
   favoritos?: boolean | ProductoCountOutputTypeCountFavoritosArgs
+  eventosComportamiento?: boolean | ProductoCountOutputTypeCountEventosComportamientoArgs
 }
 
 /**
@@ -950,6 +1074,13 @@ export type ProductoCountOutputTypeCountFavoritosArgs<ExtArgs extends runtime.Ty
   where?: Prisma.FavoritoWhereInput
 }
 
+/**
+ * ProductoCountOutputType without action
+ */
+export type ProductoCountOutputTypeCountEventosComportamientoArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EventoComportamientoWhereInput
+}
+
 
 export type ProductoSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -967,6 +1098,7 @@ export type ProductoSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   tienda?: boolean | Prisma.TiendaDefaultArgs<ExtArgs>
   imagenes?: boolean | Prisma.Producto$imagenesArgs<ExtArgs>
   favoritos?: boolean | Prisma.Producto$favoritosArgs<ExtArgs>
+  eventosComportamiento?: boolean | Prisma.Producto$eventosComportamientoArgs<ExtArgs>
   _count?: boolean | Prisma.ProductoCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["producto"]>
 
@@ -1022,6 +1154,7 @@ export type ProductoInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
   tienda?: boolean | Prisma.TiendaDefaultArgs<ExtArgs>
   imagenes?: boolean | Prisma.Producto$imagenesArgs<ExtArgs>
   favoritos?: boolean | Prisma.Producto$favoritosArgs<ExtArgs>
+  eventosComportamiento?: boolean | Prisma.Producto$eventosComportamientoArgs<ExtArgs>
   _count?: boolean | Prisma.ProductoCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProductoIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1037,6 +1170,7 @@ export type $ProductoPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     tienda: Prisma.$TiendaPayload<ExtArgs>
     imagenes: Prisma.$ProductoImagenPayload<ExtArgs>[]
     favoritos: Prisma.$FavoritoPayload<ExtArgs>[]
+    eventosComportamiento: Prisma.$EventoComportamientoPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1448,6 +1582,7 @@ export interface Prisma__ProductoClient<T, Null = never, ExtArgs extends runtime
   tienda<T extends Prisma.TiendaDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TiendaDefaultArgs<ExtArgs>>): Prisma.Prisma__TiendaClient<runtime.Types.Result.GetResult<Prisma.$TiendaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   imagenes<T extends Prisma.Producto$imagenesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Producto$imagenesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductoImagenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   favoritos<T extends Prisma.Producto$favoritosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Producto$favoritosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FavoritoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  eventosComportamiento<T extends Prisma.Producto$eventosComportamientoArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Producto$eventosComportamientoArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EventoComportamientoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1935,6 +2070,30 @@ export type Producto$favoritosArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.FavoritoScalarFieldEnum | Prisma.FavoritoScalarFieldEnum[]
+}
+
+/**
+ * Producto.eventosComportamiento
+ */
+export type Producto$eventosComportamientoArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EventoComportamiento
+   */
+  select?: Prisma.EventoComportamientoSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EventoComportamiento
+   */
+  omit?: Prisma.EventoComportamientoOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EventoComportamientoInclude<ExtArgs> | null
+  where?: Prisma.EventoComportamientoWhereInput
+  orderBy?: Prisma.EventoComportamientoOrderByWithRelationInput | Prisma.EventoComportamientoOrderByWithRelationInput[]
+  cursor?: Prisma.EventoComportamientoWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EventoComportamientoScalarFieldEnum | Prisma.EventoComportamientoScalarFieldEnum[]
 }
 
 /**
