@@ -3,7 +3,15 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { PrismaService } from '../prisma/prisma.service';
+import {
+  EstadoProcesamientoImagen,
+} from '../generated/prisma/enums';
+import {
+  catalogoImagenSelect,
+} from '../catalogo/selects/catalogo-imagen.select';
+import {
+  PrismaService,
+} from '../prisma/prisma.service';
 
 @Injectable()
 export class FavoritosService {
@@ -26,12 +34,20 @@ export class FavoritosService {
             },
           },
         },
-        orderBy: {
-          fechaCreacion: 'desc',
-        },
-        include: {
+        select: {
+          id: true,
+          fechaCreacion: true,
           producto: {
-            include: {
+            select: {
+              id: true,
+              codigo: true,
+              nombre: true,
+              categoria: true,
+              descripcion: true,
+              precio: true,
+              stock: true,
+              atributos: true,
+              fechaCreacion: true,
               tienda: {
                 select: {
                   id: true,
@@ -45,7 +61,11 @@ export class FavoritosService {
               imagenes: {
                 where: {
                   estado: true,
+                  estadoProcesamiento:
+                    EstadoProcesamientoImagen.PROCESADA,
                 },
+                select:
+                  catalogoImagenSelect,
                 orderBy: [
                   {
                     principal: 'desc',
@@ -53,16 +73,17 @@ export class FavoritosService {
                   {
                     orden: 'asc',
                   },
+                  {
+                    id: 'asc',
+                  },
                 ],
-                select: {
-                  id: true,
-                  url: true,
-                  principal: true,
-                  orden: true,
-                },
+                take: 1,
               },
             },
           },
+        },
+        orderBy: {
+          fechaCreacion: 'desc',
         },
       });
 
@@ -71,12 +92,30 @@ export class FavoritosService {
         'Favoritos obtenidos correctamente',
       total: favoritos.length,
       favoritos: favoritos.map(
-        (favorito) => ({
-          id: favorito.id,
-          fechaCreacion:
-            favorito.fechaCreacion,
-          producto: favorito.producto,
-        }),
+        ({
+          id,
+          fechaCreacion,
+          producto,
+        }) => {
+          const {
+            imagenes,
+            precio,
+            ...productoBase
+          } = producto;
+
+          return {
+            id,
+            fechaCreacion,
+            producto: {
+              ...productoBase,
+              precio: Number(precio),
+              disponible:
+                producto.stock > 0,
+              imagenPrincipal:
+                imagenes[0] ?? null,
+            },
+          };
+        },
       ),
     };
   }
