@@ -21,6 +21,7 @@ model Usuario {
 
   tiendas         Tienda[]
   sesionesRefresh SesionRefresh[]
+  favoritos       Favorito[]
 
   @@map("usuario")
 }
@@ -45,18 +46,19 @@ model SesionRefresh {
 }
 
 model Tienda {
-  id                Int        @id @default(autoincrement())
-  codigo            String     @unique @db.VarChar(20)
-  nombre            String     @db.VarChar(150)
-  descripcion       String?    @db.VarChar(500)
-  galeria           String     @db.VarChar(150)
-  piso              String?    @db.VarChar(20)
-  numeroLocal       String     @map("numero_local") @db.VarChar(30)
-  telefono          String?    @db.VarChar(20)
-  estado            Boolean    @default(true)
-  fechaCreacion     DateTime   @default(now()) @map("fecha_creacion")
-  fechaModificacion DateTime   @updatedAt @map("fecha_modificacion")
-  productos         Producto[]
+  id                Int      @id @default(autoincrement())
+  codigo            String   @unique @db.VarChar(20)
+  nombre            String   @db.VarChar(150)
+  descripcion       String?  @db.VarChar(500)
+  galeria           String   @db.VarChar(150)
+  piso              String?  @db.VarChar(20)
+  numeroLocal       String   @map("numero_local") @db.VarChar(30)
+  telefono          String?  @db.VarChar(20)
+  estado            Boolean  @default(true)
+  fechaCreacion     DateTime @default(now()) @map("fecha_creacion")
+  fechaModificacion DateTime @updatedAt @map("fecha_modificacion")
+
+  productos Producto[]
 
   usuarioId Int     @map("usuario_id")
   usuario   Usuario @relation(fields: [usuarioId], references: [id])
@@ -79,8 +81,9 @@ model Producto {
   fechaCreacion     DateTime @default(now()) @map("fecha_creacion")
   fechaModificacion DateTime @updatedAt @map("fecha_modificacion")
 
-  tienda   Tienda           @relation(fields: [tiendaId], references: [id])
-  imagenes ProductoImagen[]
+  tienda    Tienda           @relation(fields: [tiendaId], references: [id])
+  imagenes  ProductoImagen[]
+  favoritos Favorito[]
 
   @@index([tiendaId])
   @@index([categoria])
@@ -115,6 +118,22 @@ model ProductoImagen {
   @@index([productoId])
   @@index([estadoProcesamiento])
   @@map("producto_imagen")
+}
+
+model Favorito {
+  id            Int      @id @default(autoincrement())
+  usuarioId     Int      @map("usuario_id")
+  productoId    Int      @map("producto_id")
+  fechaCreacion DateTime @default(now()) @map("fecha_creacion")
+
+  usuario  Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  producto Producto @relation(fields: [productoId], references: [id], onDelete: Cascade)
+
+  @@unique([usuarioId, productoId])
+  @@index([usuarioId])
+  @@index([productoId])
+  @@index([fechaCreacion])
+  @@map("favorito")
 }
 
 enum EstadoProcesamientoImagen {

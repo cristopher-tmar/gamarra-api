@@ -1,23 +1,32 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { PrismaModule } from './prisma/prisma.module';
-import { ProductosModule } from './productos/productos.module';
-import { TiendasModule } from './tiendas/tiendas.module';
-import { HealthModule } from './health/health.module';
-import { envValidationSchema } from './shared/config/env.validation';
 import { AuthModule } from './auth/auth.module';
-import { VisionModule } from './vision/vision.module';
-import { ProductoImagenesModule } from './producto-imagenes/producto-imagenes.module';
 import { CatalogoModule } from './catalogo/catalogo.module';
+import { FavoritosModule } from './favoritos/favoritos.module';
+import { HealthModule } from './health/health.module';
+import {
+  PrismaModule,
+} from './prisma/prisma.module';
+import {
+  ProductoImagenesModule,
+} from './producto-imagenes/producto-imagenes.module';
+import { ProductosModule } from './productos/productos.module';
+import {
+  envValidationSchema,
+} from './shared/config/env.validation';
+import { TiendasModule } from './tiendas/tiendas.module';
+import { VisionModule } from './vision/vision.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
-      validationSchema: envValidationSchema,
+      validationSchema:
+        envValidationSchema,
       validationOptions: {
         libraryOptions: {
           abortEarly: false,
@@ -32,8 +41,13 @@ import { CatalogoModule } from './catalogo/catalogo.module';
     VisionModule,
     ProductoImagenesModule,
     CatalogoModule,
+    FavoritosModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [
+    AppController,
+  ],
+  providers: [
+    AppService,
+  ],
 })
 export class AppModule {}

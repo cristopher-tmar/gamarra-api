@@ -55,7 +55,8 @@ export const ModelName = {
   SesionRefresh: 'SesionRefresh',
   Tienda: 'Tienda',
   Producto: 'Producto',
-  ProductoImagen: 'ProductoImagen'
+  ProductoImagen: 'ProductoImagen',
+  Favorito: 'Favorito'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -163,6 +164,16 @@ export const ProductoImagenScalarFieldEnum = {
 } as const
 
 export type ProductoImagenScalarFieldEnum = (typeof ProductoImagenScalarFieldEnum)[keyof typeof ProductoImagenScalarFieldEnum]
+
+
+export const FavoritoScalarFieldEnum = {
+  id: 'id',
+  usuarioId: 'usuarioId',
+  productoId: 'productoId',
+  fechaCreacion: 'fechaCreacion'
+} as const
+
+export type FavoritoScalarFieldEnum = (typeof FavoritoScalarFieldEnum)[keyof typeof FavoritoScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -42,3 +42,8 @@ export type Producto = Prisma.ProductoModel
  * 
  */
 export type ProductoImagen = Prisma.ProductoImagenModel
+/**
+ * Model Favorito
+ * 
+ */
+export type Favorito = Prisma.FavoritoModel

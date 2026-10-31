@@ -250,6 +250,7 @@ export type UsuarioWhereInput = {
   fechaModificacion?: Prisma.DateTimeFilter<"Usuario"> | Date | string
   tiendas?: Prisma.TiendaListRelationFilter
   sesionesRefresh?: Prisma.SesionRefreshListRelationFilter
+  favoritos?: Prisma.FavoritoListRelationFilter
 }
 
 export type UsuarioOrderByWithRelationInput = {
@@ -264,6 +265,7 @@ export type UsuarioOrderByWithRelationInput = {
   fechaModificacion?: Prisma.SortOrder
   tiendas?: Prisma.TiendaOrderByRelationAggregateInput
   sesionesRefresh?: Prisma.SesionRefreshOrderByRelationAggregateInput
+  favoritos?: Prisma.FavoritoOrderByRelationAggregateInput
 }
 
 export type UsuarioWhereUniqueInput = Prisma.AtLeast<{
@@ -281,6 +283,7 @@ export type UsuarioWhereUniqueInput = Prisma.AtLeast<{
   fechaModificacion?: Prisma.DateTimeFilter<"Usuario"> | Date | string
   tiendas?: Prisma.TiendaListRelationFilter
   sesionesRefresh?: Prisma.SesionRefreshListRelationFilter
+  favoritos?: Prisma.FavoritoListRelationFilter
 }, "id" | "correo">
 
 export type UsuarioOrderByWithAggregationInput = {
@@ -326,6 +329,7 @@ export type UsuarioCreateInput = {
   fechaModificacion?: Date | string
   tiendas?: Prisma.TiendaCreateNestedManyWithoutUsuarioInput
   sesionesRefresh?: Prisma.SesionRefreshCreateNestedManyWithoutUsuarioInput
+  favoritos?: Prisma.FavoritoCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateInput = {
@@ -340,6 +344,7 @@ export type UsuarioUncheckedCreateInput = {
   fechaModificacion?: Date | string
   tiendas?: Prisma.TiendaUncheckedCreateNestedManyWithoutUsuarioInput
   sesionesRefresh?: Prisma.SesionRefreshUncheckedCreateNestedManyWithoutUsuarioInput
+  favoritos?: Prisma.FavoritoUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUpdateInput = {
@@ -353,6 +358,7 @@ export type UsuarioUpdateInput = {
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tiendas?: Prisma.TiendaUpdateManyWithoutUsuarioNestedInput
   sesionesRefresh?: Prisma.SesionRefreshUpdateManyWithoutUsuarioNestedInput
+  favoritos?: Prisma.FavoritoUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateInput = {
@@ -367,6 +373,7 @@ export type UsuarioUncheckedUpdateInput = {
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tiendas?: Prisma.TiendaUncheckedUpdateManyWithoutUsuarioNestedInput
   sesionesRefresh?: Prisma.SesionRefreshUncheckedUpdateManyWithoutUsuarioNestedInput
+  favoritos?: Prisma.FavoritoUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateManyInput = {
@@ -505,6 +512,20 @@ export type UsuarioUpdateOneRequiredWithoutTiendasNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UsuarioUpdateToOneWithWhereWithoutTiendasInput, Prisma.UsuarioUpdateWithoutTiendasInput>, Prisma.UsuarioUncheckedUpdateWithoutTiendasInput>
 }
 
+export type UsuarioCreateNestedOneWithoutFavoritosInput = {
+  create?: Prisma.XOR<Prisma.UsuarioCreateWithoutFavoritosInput, Prisma.UsuarioUncheckedCreateWithoutFavoritosInput>
+  connectOrCreate?: Prisma.UsuarioCreateOrConnectWithoutFavoritosInput
+  connect?: Prisma.UsuarioWhereUniqueInput
+}
+
+export type UsuarioUpdateOneRequiredWithoutFavoritosNestedInput = {
+  create?: Prisma.XOR<Prisma.UsuarioCreateWithoutFavoritosInput, Prisma.UsuarioUncheckedCreateWithoutFavoritosInput>
+  connectOrCreate?: Prisma.UsuarioCreateOrConnectWithoutFavoritosInput
+  upsert?: Prisma.UsuarioUpsertWithoutFavoritosInput
+  connect?: Prisma.UsuarioWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UsuarioUpdateToOneWithWhereWithoutFavoritosInput, Prisma.UsuarioUpdateWithoutFavoritosInput>, Prisma.UsuarioUncheckedUpdateWithoutFavoritosInput>
+}
+
 export type UsuarioCreateWithoutSesionesRefreshInput = {
   nombres: string
   apellidos: string
@@ -515,6 +536,7 @@ export type UsuarioCreateWithoutSesionesRefreshInput = {
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   tiendas?: Prisma.TiendaCreateNestedManyWithoutUsuarioInput
+  favoritos?: Prisma.FavoritoCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutSesionesRefreshInput = {
@@ -528,6 +550,7 @@ export type UsuarioUncheckedCreateWithoutSesionesRefreshInput = {
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   tiendas?: Prisma.TiendaUncheckedCreateNestedManyWithoutUsuarioInput
+  favoritos?: Prisma.FavoritoUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutSesionesRefreshInput = {
@@ -556,6 +579,7 @@ export type UsuarioUpdateWithoutSesionesRefreshInput = {
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tiendas?: Prisma.TiendaUpdateManyWithoutUsuarioNestedInput
+  favoritos?: Prisma.FavoritoUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutSesionesRefreshInput = {
@@ -569,6 +593,7 @@ export type UsuarioUncheckedUpdateWithoutSesionesRefreshInput = {
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tiendas?: Prisma.TiendaUncheckedUpdateManyWithoutUsuarioNestedInput
+  favoritos?: Prisma.FavoritoUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateWithoutTiendasInput = {
@@ -581,6 +606,7 @@ export type UsuarioCreateWithoutTiendasInput = {
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   sesionesRefresh?: Prisma.SesionRefreshCreateNestedManyWithoutUsuarioInput
+  favoritos?: Prisma.FavoritoCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutTiendasInput = {
@@ -594,6 +620,7 @@ export type UsuarioUncheckedCreateWithoutTiendasInput = {
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   sesionesRefresh?: Prisma.SesionRefreshUncheckedCreateNestedManyWithoutUsuarioInput
+  favoritos?: Prisma.FavoritoUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutTiendasInput = {
@@ -622,6 +649,7 @@ export type UsuarioUpdateWithoutTiendasInput = {
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sesionesRefresh?: Prisma.SesionRefreshUpdateManyWithoutUsuarioNestedInput
+  favoritos?: Prisma.FavoritoUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutTiendasInput = {
@@ -635,6 +663,77 @@ export type UsuarioUncheckedUpdateWithoutTiendasInput = {
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sesionesRefresh?: Prisma.SesionRefreshUncheckedUpdateManyWithoutUsuarioNestedInput
+  favoritos?: Prisma.FavoritoUncheckedUpdateManyWithoutUsuarioNestedInput
+}
+
+export type UsuarioCreateWithoutFavoritosInput = {
+  nombres: string
+  apellidos: string
+  correo: string
+  passwordHash: string
+  rol?: $Enums.RolUsuario
+  estado?: boolean
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  tiendas?: Prisma.TiendaCreateNestedManyWithoutUsuarioInput
+  sesionesRefresh?: Prisma.SesionRefreshCreateNestedManyWithoutUsuarioInput
+}
+
+export type UsuarioUncheckedCreateWithoutFavoritosInput = {
+  id?: number
+  nombres: string
+  apellidos: string
+  correo: string
+  passwordHash: string
+  rol?: $Enums.RolUsuario
+  estado?: boolean
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  tiendas?: Prisma.TiendaUncheckedCreateNestedManyWithoutUsuarioInput
+  sesionesRefresh?: Prisma.SesionRefreshUncheckedCreateNestedManyWithoutUsuarioInput
+}
+
+export type UsuarioCreateOrConnectWithoutFavoritosInput = {
+  where: Prisma.UsuarioWhereUniqueInput
+  create: Prisma.XOR<Prisma.UsuarioCreateWithoutFavoritosInput, Prisma.UsuarioUncheckedCreateWithoutFavoritosInput>
+}
+
+export type UsuarioUpsertWithoutFavoritosInput = {
+  update: Prisma.XOR<Prisma.UsuarioUpdateWithoutFavoritosInput, Prisma.UsuarioUncheckedUpdateWithoutFavoritosInput>
+  create: Prisma.XOR<Prisma.UsuarioCreateWithoutFavoritosInput, Prisma.UsuarioUncheckedCreateWithoutFavoritosInput>
+  where?: Prisma.UsuarioWhereInput
+}
+
+export type UsuarioUpdateToOneWithWhereWithoutFavoritosInput = {
+  where?: Prisma.UsuarioWhereInput
+  data: Prisma.XOR<Prisma.UsuarioUpdateWithoutFavoritosInput, Prisma.UsuarioUncheckedUpdateWithoutFavoritosInput>
+}
+
+export type UsuarioUpdateWithoutFavoritosInput = {
+  nombres?: Prisma.StringFieldUpdateOperationsInput | string
+  apellidos?: Prisma.StringFieldUpdateOperationsInput | string
+  correo?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  rol?: Prisma.EnumRolUsuarioFieldUpdateOperationsInput | $Enums.RolUsuario
+  estado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tiendas?: Prisma.TiendaUpdateManyWithoutUsuarioNestedInput
+  sesionesRefresh?: Prisma.SesionRefreshUpdateManyWithoutUsuarioNestedInput
+}
+
+export type UsuarioUncheckedUpdateWithoutFavoritosInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  nombres?: Prisma.StringFieldUpdateOperationsInput | string
+  apellidos?: Prisma.StringFieldUpdateOperationsInput | string
+  correo?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  rol?: Prisma.EnumRolUsuarioFieldUpdateOperationsInput | $Enums.RolUsuario
+  estado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tiendas?: Prisma.TiendaUncheckedUpdateManyWithoutUsuarioNestedInput
+  sesionesRefresh?: Prisma.SesionRefreshUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 
@@ -645,11 +744,13 @@ export type UsuarioUncheckedUpdateWithoutTiendasInput = {
 export type UsuarioCountOutputType = {
   tiendas: number
   sesionesRefresh: number
+  favoritos: number
 }
 
 export type UsuarioCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tiendas?: boolean | UsuarioCountOutputTypeCountTiendasArgs
   sesionesRefresh?: boolean | UsuarioCountOutputTypeCountSesionesRefreshArgs
+  favoritos?: boolean | UsuarioCountOutputTypeCountFavoritosArgs
 }
 
 /**
@@ -676,6 +777,13 @@ export type UsuarioCountOutputTypeCountSesionesRefreshArgs<ExtArgs extends runti
   where?: Prisma.SesionRefreshWhereInput
 }
 
+/**
+ * UsuarioCountOutputType without action
+ */
+export type UsuarioCountOutputTypeCountFavoritosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FavoritoWhereInput
+}
+
 
 export type UsuarioSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -689,6 +797,7 @@ export type UsuarioSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   fechaModificacion?: boolean
   tiendas?: boolean | Prisma.Usuario$tiendasArgs<ExtArgs>
   sesionesRefresh?: boolean | Prisma.Usuario$sesionesRefreshArgs<ExtArgs>
+  favoritos?: boolean | Prisma.Usuario$favoritosArgs<ExtArgs>
   _count?: boolean | Prisma.UsuarioCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["usuario"]>
 
@@ -732,6 +841,7 @@ export type UsuarioOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
 export type UsuarioInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tiendas?: boolean | Prisma.Usuario$tiendasArgs<ExtArgs>
   sesionesRefresh?: boolean | Prisma.Usuario$sesionesRefreshArgs<ExtArgs>
+  favoritos?: boolean | Prisma.Usuario$favoritosArgs<ExtArgs>
   _count?: boolean | Prisma.UsuarioCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UsuarioIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -742,6 +852,7 @@ export type $UsuarioPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   objects: {
     tiendas: Prisma.$TiendaPayload<ExtArgs>[]
     sesionesRefresh: Prisma.$SesionRefreshPayload<ExtArgs>[]
+    favoritos: Prisma.$FavoritoPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1149,6 +1260,7 @@ export interface Prisma__UsuarioClient<T, Null = never, ExtArgs extends runtime.
   readonly [Symbol.toStringTag]: "PrismaPromise"
   tiendas<T extends Prisma.Usuario$tiendasArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$tiendasArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TiendaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sesionesRefresh<T extends Prisma.Usuario$sesionesRefreshArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$sesionesRefreshArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SesionRefreshPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  favoritos<T extends Prisma.Usuario$favoritosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$favoritosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FavoritoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1625,6 +1737,30 @@ export type Usuario$sesionesRefreshArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.SesionRefreshScalarFieldEnum | Prisma.SesionRefreshScalarFieldEnum[]
+}
+
+/**
+ * Usuario.favoritos
+ */
+export type Usuario$favoritosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Favorito
+   */
+  select?: Prisma.FavoritoSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Favorito
+   */
+  omit?: Prisma.FavoritoOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FavoritoInclude<ExtArgs> | null
+  where?: Prisma.FavoritoWhereInput
+  orderBy?: Prisma.FavoritoOrderByWithRelationInput | Prisma.FavoritoOrderByWithRelationInput[]
+  cursor?: Prisma.FavoritoWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FavoritoScalarFieldEnum | Prisma.FavoritoScalarFieldEnum[]
 }
 
 /**
