@@ -22,7 +22,7 @@ export class EventosComportamientoService {
   constructor(
     private readonly prisma:
       PrismaService,
-  ) {}
+  ) { }
 
   async registrar(
     registrarEventoDto:
@@ -44,8 +44,8 @@ export class EventosComportamientoService {
 
     const metadata =
       registrarEventoDto.metadata as
-        | Prisma.InputJsonValue
-        | undefined;
+      | Prisma.InputJsonValue
+      | undefined;
 
     const evento =
       await this.prisma
@@ -100,6 +100,8 @@ export class EventosComportamientoService {
           .FAVORITO_ELIMINADO,
         TipoEventoComportamiento
           .RESULTADO_SELECCIONADO,
+        TipoEventoComportamiento
+          .CONTACTO_WHATSAPP,
       ];
 
     if (
@@ -115,8 +117,8 @@ export class EventosComportamientoService {
 
     if (
       dto.tipo ===
-        TipoEventoComportamiento
-          .BUSQUEDA_TEXTO &&
+      TipoEventoComportamiento
+        .BUSQUEDA_TEXTO &&
       !dto.terminoBusqueda?.trim()
     ) {
       throw new BadRequestException(

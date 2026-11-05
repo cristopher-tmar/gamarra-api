@@ -34,7 +34,8 @@ export const TipoEventoComportamiento = {
   FAVORITO_ELIMINADO: 'FAVORITO_ELIMINADO',
   BUSQUEDA_TEXTO: 'BUSQUEDA_TEXTO',
   BUSQUEDA_VISUAL: 'BUSQUEDA_VISUAL',
-  RESULTADO_SELECCIONADO: 'RESULTADO_SELECCIONADO'
+  RESULTADO_SELECCIONADO: 'RESULTADO_SELECCIONADO',
+  CONTACTO_WHATSAPP: 'CONTACTO_WHATSAPP'
 } as const
 
 export type TipoEventoComportamiento = (typeof TipoEventoComportamiento)[keyof typeof TipoEventoComportamiento]
