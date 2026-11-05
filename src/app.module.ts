@@ -44,6 +44,9 @@ import {
 import {
   VisionModule,
 } from './vision/vision.module';
+import {
+  PrediccionesModule,
+} from './predicciones/predicciones.module';
 
 @Module({
   imports: [
@@ -68,6 +71,7 @@ import {
     CatalogoModule,
     FavoritosModule,
     EventosComportamientoModule,
+    PrediccionesModule,
   ],
   controllers: [
     AppController,
