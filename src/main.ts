@@ -1,6 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 import {
   DocumentBuilder,
   SwaggerModule,
@@ -11,7 +12,16 @@ import { RequestLoggingInterceptor } from './shared/http/interceptors/request-lo
 import { correlationIdMiddleware } from './shared/http/middleware/correlation-id.middleware';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app =
+    await NestFactory.create<NestExpressApplication>(
+      AppModule,
+    );
+
+  // El registro masivo de productos envía listas de hasta
+  // 500 productos; el límite por defecto de Express es 100 KB.
+  app.useBodyParser('json', {
+    limit: '5mb',
+  });
 
   const configService =
     app.get(ConfigService);

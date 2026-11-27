@@ -1,13 +1,20 @@
 import {
   ConflictException,
   ForbiddenException,
+  HttpException,
   Injectable,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import { plainToInstance } from 'class-transformer';
+import {
+  validate,
+  ValidationError,
+} from 'class-validator';
 import { Prisma } from '../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductoDto } from './dto/create-producto.dto';
+import { CreateProductosMasivoDto } from './dto/create-productos-masivo.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
 import { ImageStorage } from '../producto-imagenes/interfaces/image-storage.interface';
 
@@ -16,6 +23,27 @@ import { RolUsuario } from '../generated/prisma/enums';
 
 import { productoImagenSelect } from '../producto-imagenes/selects/producto-imagen.select';
 import { tiendaProductoSelect } from '../tiendas/selects/tienda-producto.select';
+
+export interface ProductoMasivoRegistrado {
+  fila: number;
+  id: number;
+  codigo: string;
+  nombre: string;
+}
+
+export interface ProductoMasivoError {
+  fila: number;
+  codigo: string | null;
+  motivos: string[];
+}
+
+export interface ResultadoRegistroMasivo {
+  totalRecibidos: number;
+  registrados: number;
+  rechazados: number;
+  productosRegistrados: ProductoMasivoRegistrado[];
+  errores: ProductoMasivoError[];
+}
 
 @Injectable()
 export class ProductosService {
@@ -115,6 +143,202 @@ export class ProductosService {
         },
       },
     });
+  }
+
+  /*
+   * Registro masivo con registro parcial.
+   *
+   * Cada producto se valida con CreateProductoDto (mismas reglas
+   * que POST /productos) y se registra mediante create(), que sigue
+   * siendo la única lógica de creación. Un producto rechazado no
+   * impide el registro de los demás.
+   */
+  async createMany(
+    createProductosMasivoDto: CreateProductosMasivoDto,
+    usuario: JwtPayload,
+  ): Promise<ResultadoRegistroMasivo> {
+    const { productos } =
+      createProductosMasivoDto;
+
+    const productosRegistrados:
+      ProductoMasivoRegistrado[] = [];
+
+    const errores: ProductoMasivoError[] = [];
+
+    // Código (sin espacios laterales) -> fila donde apareció por primera vez
+    const codigosEnLote =
+      new Map<string, number>();
+
+    for (const [indice, item] of productos.entries()) {
+      const filaPorDefecto = indice + 1;
+
+      if (
+        typeof item !== 'object' ||
+        item === null ||
+        Array.isArray(item)
+      ) {
+        errores.push({
+          fila: filaPorDefecto,
+          codigo: null,
+          motivos: [
+            'El producto debe enviarse como un objeto JSON',
+          ],
+        });
+
+        continue;
+      }
+
+      const { fila: filaOrigen, ...datos } =
+        item as Record<string, unknown>;
+
+      const fila =
+        Number.isInteger(filaOrigen) &&
+        (filaOrigen as number) > 0
+          ? (filaOrigen as number)
+          : filaPorDefecto;
+
+      const codigo =
+        typeof datos.codigo === 'string'
+          ? datos.codigo.trim()
+          : null;
+
+      // Detección de códigos repetidos dentro del mismo lote
+      if (codigo) {
+        const filaAnterior =
+          codigosEnLote.get(codigo);
+
+        if (filaAnterior !== undefined) {
+          errores.push({
+            fila,
+            codigo,
+            motivos: [
+              `El código ${codigo} está repetido en el lote (fila ${filaAnterior})`,
+            ],
+          });
+
+          continue;
+        }
+
+        codigosEnLote.set(codigo, fila);
+      }
+
+      const productoDto = plainToInstance(
+        CreateProductoDto,
+        datos,
+      );
+
+      const erroresValidacion = await validate(
+        productoDto,
+        {
+          whitelist: true,
+          forbidNonWhitelisted: true,
+        },
+      );
+
+      if (erroresValidacion.length > 0) {
+        errores.push({
+          fila,
+          codigo,
+          motivos: this.obtenerMensajesValidacion(
+            erroresValidacion,
+          ),
+        });
+
+        continue;
+      }
+
+      try {
+        const producto = await this.create(
+          productoDto,
+          usuario,
+        );
+
+        productosRegistrados.push({
+          fila,
+          id: producto.id,
+          codigo: producto.codigo,
+          nombre: producto.nombre,
+        });
+      } catch (error: unknown) {
+        errores.push({
+          fila,
+          codigo,
+          motivos: this.obtenerMensajesError(
+            error,
+            fila,
+          ),
+        });
+      }
+    }
+
+    return {
+      totalRecibidos: productos.length,
+      registrados: productosRegistrados.length,
+      rechazados: errores.length,
+      productosRegistrados,
+      errores: errores.sort(
+        (a, b) => a.fila - b.fila,
+      ),
+    };
+  }
+
+  private obtenerMensajesValidacion(
+    errores: ValidationError[],
+  ): string[] {
+    return errores.flatMap((error) => [
+      ...Object.values(error.constraints ?? {}),
+      ...this.obtenerMensajesValidacion(
+        error.children ?? [],
+      ),
+    ]);
+  }
+
+  private obtenerMensajesError(
+    error: unknown,
+    fila: number,
+  ): string[] {
+    if (error instanceof HttpException) {
+      const respuesta = error.getResponse();
+
+      if (typeof respuesta === 'string') {
+        return [respuesta];
+      }
+
+      const mensaje = (
+        respuesta as { message?: unknown }
+      ).message;
+
+      if (Array.isArray(mensaje)) {
+        return mensaje.map(String);
+      }
+
+      if (typeof mensaje === 'string') {
+        return [mensaje];
+      }
+
+      return [error.message];
+    }
+
+    if (
+      error instanceof
+        Prisma.PrismaClientKnownRequestError &&
+      error.code === 'P2002'
+    ) {
+      return [
+        'Ya existe un producto con el código indicado',
+      ];
+    }
+
+    this.logger.error(
+      `Error inesperado al registrar el producto de la fila ${fila}`,
+      error instanceof Error
+        ? error.stack
+        : String(error),
+    );
+
+    return [
+      'Error inesperado al registrar el producto',
+    ];
   }
 
   findAll(usuario: JwtPayload) {

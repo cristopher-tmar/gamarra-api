@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
@@ -29,6 +31,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { RolUsuario } from '../generated/prisma/enums';
 import { CreateProductoDto } from './dto/create-producto.dto';
+import { CreateProductosMasivoDto } from './dto/create-productos-masivo.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
 import { ProductosService } from './productos.service';
 
@@ -84,6 +87,34 @@ export class ProductosController {
   ) {
     return this.productosService.create(
       createProductoDto,
+      request.usuario,
+    );
+  }
+
+  @Post('masivo')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Registrar productos de forma masiva',
+    description:
+      'Registra una lista de productos (por ejemplo, leída desde un Excel o CSV). Cada producto se valida y registra con las mismas reglas y permisos que POST /productos. ' +
+      'El registro es parcial: los productos válidos se guardan y los rechazados se reportan con su fila, código y motivos.',
+  })
+  @ApiOkResponse({
+    description:
+      'Lote procesado. Devuelve totalRecibidos, registrados, rechazados, productosRegistrados y errores.',
+  })
+  @ApiBadRequestResponse({
+    description:
+      'El cuerpo no contiene una lista válida de productos',
+  })
+  createMany(
+    @Body()
+    createProductosMasivoDto: CreateProductosMasivoDto,
+    @Request()
+    request: AuthenticatedRequest,
+  ) {
+    return this.productosService.createMany(
+      createProductosMasivoDto,
       request.usuario,
     );
   }
